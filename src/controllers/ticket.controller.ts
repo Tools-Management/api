@@ -19,9 +19,14 @@ export const getAllTickets = asyncHandler(async (req: Request, res: Response): P
   }
 });
 
-export const createTicket = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+export const createTicket = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const data = req.body as ITicketCreationAttributes;
+    const userId = req.user?.userId;
+    if (!userId) {
+      return sendErrorResponse(res, MESSAGES.ERROR.AUTH.REQUIRED_AUTH);
+    }
+    data.createdBy = userId;
     const ticket = await TicketService.createTicket(data);
     sendSuccessResponse(res, ticket, MESSAGES.SUCCESS.CREATED);
   } catch (error) {

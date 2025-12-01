@@ -59,7 +59,7 @@ Ticket.init(
     },
     order: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     phone: {
       type: DataTypes.STRING(500),
@@ -95,8 +95,8 @@ Ticket.init(
       allowNull: true,
       defaultValue: null,
     },
-    createdAt: { type: DataTypes.DATE, allowNull: false },
-    updatedAt: { type: DataTypes.DATE, allowNull: false },
+    createdAt: { type: DataTypes.DATE, allowNull: true, field: "created_at", },
+    updatedAt: { type: DataTypes.DATE, allowNull: true, field: "updated_at" },
   },
   {
     sequelize,
