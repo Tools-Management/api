@@ -44,17 +44,13 @@ export class AuthApiService {
 
   static async getMe(
     token: string
-  ): Promise<
-    IApiGetMeSuccessResponse | IApiGetMeErrorResponse
-  > {
+  ): Promise<IApiGetMeSuccessResponse | IApiGetMeErrorResponse> {
     const response = await axios.get(`${ENV.EXTERNAL_API_URL}/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data as
-      | IApiGetMeSuccessResponse
-      | IApiGetMeErrorResponse;
+    return response.data as IApiGetMeSuccessResponse | IApiGetMeErrorResponse;
   }
 
   // License Keys Get
@@ -100,19 +96,26 @@ export class AuthApiService {
   ): Promise<
     IApiCreateLicenseKeySuccessResponse | IApiCreateLicenseKeyErrorResponse
   > {
-    const response = await axios.post(
-      `${ENV.EXTERNAL_API_URL}/licenses-keys`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    try {
+      const response = await axios.post(
+        `${ENV.EXTERNAL_API_URL}/license-keys`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    return response.data as
-      | IApiCreateLicenseKeySuccessResponse
-      | IApiCreateLicenseKeyErrorResponse;
+      return response.data as
+        | IApiCreateLicenseKeySuccessResponse
+        | IApiCreateLicenseKeyErrorResponse;
+    } catch (error) {
+      return {
+        success: false,
+        error: error as string,
+      } as IApiCreateLicenseKeyErrorResponse;
+    }
   }
 
   // Generate License Keys

@@ -276,3 +276,10 @@ export const DEVELOPMENT_ENVIRONMENT = 'development';
 
 // Production Environment
 export const PRODUCTION_ENVIRONMENT = 'production';
+
+export const TICKET_DEPARTMENTS = {
+  TECHNICAL: 'technical',
+  BILLING: 'billing',
+  ACCOUNT: 'account',
+  OTHER: 'other',
+} as const;

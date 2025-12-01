@@ -84,7 +84,7 @@ export const getLicenseKeys = asyncHandler(
         throw new Error("API_RETURNED_ERROR_EVEN_WITH_FRESH_TOKEN");
       }
 
-      return sendSuccessResponse(res, result, MESSAGES.SUCCESS.FETCHED);
+      return sendSuccessResponse(res, result.data, MESSAGES.SUCCESS.FETCHED);
     } catch (error) {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }

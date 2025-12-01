@@ -1,0 +1,32 @@
+'use strict';
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.addColumn('tickets', 'created_by', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+    });
+
+    await queryInterface.addColumn('tickets', 'updated_by', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+    });
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.removeColumn('tickets', 'updated_by');
+    await queryInterface.removeColumn('tickets', 'created_by');
+  }
+};

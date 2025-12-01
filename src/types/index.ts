@@ -10,6 +10,19 @@ export interface DatabaseConfig {
 
 // Database Models
 
+export interface ITicketStats {
+  pending: number;
+  processing: number;
+  resolved: number;
+  closed: number;
+}
+
+export interface ITicketStatsResponse {
+  stats: ITicketStats;
+  tickets: ITicket[];
+  totalTickets: number;
+}
+
 export interface ITicket {
   id: number;
   ticketId: string;
@@ -40,6 +53,7 @@ export interface ITicketCreationAttributes {
   title: string;
   content: string;
   status: string;
+  createdBy: number;
 }
 
 export interface ITicketReplyCreationAttributes {
