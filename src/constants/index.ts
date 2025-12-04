@@ -170,6 +170,11 @@ export const MESSAGES = {
       REQUIRED_EMAIL: 'Email is required',
       REQUIRED_MACHINE_ID: 'Machine ID is required',
       REQUIRED_NEW_LICENSE_KEY: 'New license key is required',
+      NO_AVAILABLE_KEY: 'No available license key found',
+      SYNC_SUCCESS: 'License keys synced successfully',
+      SYNC_FAILED: 'Failed to sync license keys',
+      PURCHASE_SUCCESS: 'License key purchased successfully',
+      PURCHASE_FAILED: 'Failed to purchase license key',
     },
     UPLOAD: {
       NO_FILE_UPLOADED: 'No file uploaded',

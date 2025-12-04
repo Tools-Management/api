@@ -67,6 +67,17 @@ export interface ILicenseKey {
   updatedAt: string; // ISO date-time
 }
 
+// External API License Key (from MongoDB - có _id thay vì id)
+export interface IExternalLicenseKey {
+  _id: string;
+  key: string;
+  isActive: boolean;
+  duration: string;
+  __v?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // ===========================
 // Create License Key Request
 // ===========================
@@ -106,11 +117,12 @@ export interface IApiGetMeErrorResponse extends IApiResponse<null> {}
 
 // License Keys
 export interface IApiGetLicenseKeysSuccessResponse
-  extends IApiResponse<ILicenseKey[]> {}
+  extends IApiResponse<IExternalLicenseKey[]> {}
 export interface IApiGetLicenseKeysErrorResponse extends IApiResponse<null> {}
 
+// Generate API trả về mảng string keys
 export interface IApiGenerateLicenseKeysSuccessResponse
-  extends IApiResponse<ILicenseKey[]> {}
+  extends IApiResponse<string[]> {}
 export interface IApiGenerateLicenseKeysErrorResponse
   extends IApiResponse<null> {}
 
