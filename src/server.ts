@@ -98,6 +98,7 @@ const startServer = async () => {
   const PORT = Number(ENV.PORT) || 8000;
   const HOST = ENV.HOST || '0.0.0.0';
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
       // Kết nối DB

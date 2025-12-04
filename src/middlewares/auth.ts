@@ -15,7 +15,9 @@ export const authenticateToken = async (
   try {
     const authHeader = req.headers.authorization;
     let token = JWTUtils.extractTokenFromHeader(authHeader);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!token && (req as any).cookies?.access_token) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       token = (req as any).cookies.access_token;
     }
 

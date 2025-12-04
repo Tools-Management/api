@@ -22,7 +22,7 @@ export const register = asyncHandler(
       });
 
       // Don't send OTP in response for security
-      const { otp, ...userData } = result;
+      const { otp: _otp, ...userData } = result;
 
       sendSuccessResponse(
         res,
@@ -123,7 +123,7 @@ export const resendOTP = asyncHandler(
       const result = await UserService.resendOTP(email);
 
       // Don't send OTP in response for security
-      const { otp, ...userData } = result;
+      const { otp: _otp, ...userData } = result;
 
       sendSuccessResponse(
         res,
@@ -239,6 +239,7 @@ export const logout = asyncHandler(
 export const refreshToken = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     // Get refresh token from cookies first, then from body as fallback
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const refreshToken = (req as any).refreshToken || req.body.refreshToken;
 
     if (!refreshToken) {
