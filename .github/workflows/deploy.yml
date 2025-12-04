@@ -1,28 +1,54 @@
-# .github/workflows/deploy.yml
 name: Deploy to Production
 
 on:
   push:
     branches:
-      - develop   # Chỉ chạy khi push vào develop
+      - main  # Deploy khi push vào main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v0.1.10
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            cd /var/www/nova-sites
-            echo "${{ secrets.ENV_PRODUCTION }}" > .env
+            # Navigate to project directory
+            cd /var/www/nova-sites-api
+            
+            # Pull latest code
+            git pull origin main
+            
+            # Update .env from secret (optional)
+            # echo "${{ secrets.ENV_PRODUCTION }}" > .env
+            
+            # Rebuild and restart containers
             docker-compose pull
             docker-compose up -d --build
+            
+            # Clean up old images
             docker image prune -f
+            
+            # Check health
+            sleep 5
+            curl -f http://localhost:8000/api/health || exit 1
+
+      - name: Notify deployment
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed!"
+            exit 1
+          fi
+
