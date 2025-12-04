@@ -4,6 +4,7 @@ import sequelize from '@/config/database';
 import { User } from './User';
 import { Ticket } from './Ticket';
 import { Link } from './Link';
+import { LicenseKey } from './LicenseKey';
 
 // Initialize associations after all models are loaded
 const initializeAssociations = () => {
@@ -25,7 +26,7 @@ const initializeAssociations = () => {
 initializeAssociations();
 
 // Export models
-export { Ticket, Link, User };
+export { Ticket, Link, User, LicenseKey };
 
 // Export sequelize instance
 export default sequelize; 

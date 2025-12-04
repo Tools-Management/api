@@ -1,7 +1,5 @@
 import { ENV } from "@/lib";
 import {
-  IApiGenerateLicenseKeysErrorResponse,
-  IApiGenerateLicenseKeysSuccessResponse,
   IApiGetLicenseKeysErrorResponse,
   IApiGetLicenseKeysSuccessResponse,
   IApiRegisterErrorResponse,
@@ -77,7 +75,7 @@ export class AuthApiService {
     IApiGetLicenseKeyByIdSuccessResponse | IApiGetLicenseKeyByIdErrorResponse
   > {
     const response = await axios.get(
-      `${ENV.EXTERNAL_API_URL}/licenses-keys/${id}`,
+      `${ENV.EXTERNAL_API_URL}/license-keys/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -122,23 +120,24 @@ export class AuthApiService {
   static async generateLicenseKeys(
     token: string,
     data: IGenerateLicenseKeysRequest
-  ): Promise<
-    | IApiGenerateLicenseKeysSuccessResponse
-    | IApiGenerateLicenseKeysErrorResponse
-  > {
-    const response = await axios.post(
-      `${ENV.EXTERNAL_API_URL}/license-keys/generate/batch`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+  ): Promise<string[]> {
+    try {
+      const response = await axios.post(
+        `${ENV.EXTERNAL_API_URL}/license-keys/generate/batch`,
+        JSON.stringify(data),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }
+      );
 
-    return response.data as
-      | IApiGenerateLicenseKeysSuccessResponse
-      | IApiGenerateLicenseKeysErrorResponse;
+      return response.data as string[];
+    } catch (error: any) {
+      console.error('Generate license keys error:', error);
+      throw error;
+    }
   }
 
   static async updateLicenseKey(
@@ -149,7 +148,7 @@ export class AuthApiService {
     IApiUpdateLicenseKeySuccessResponse | IApiUpdateLicenseKeyErrorResponse
   > {
     const response = await axios.patch(
-      `${ENV.EXTERNAL_API_URL}/licenses-keys/${id}`,
+      `${ENV.EXTERNAL_API_URL}/license-keys/${id}`,
       data,
       {
         headers: {
@@ -164,7 +163,7 @@ export class AuthApiService {
   }
 
   static async deleteLicenseKey(token: string, id: string): Promise<void> {
-    await axios.delete(`${ENV.EXTERNAL_API_URL}/licenses-keys/${id}`, {
+    await axios.delete(`${ENV.EXTERNAL_API_URL}/license-keys/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

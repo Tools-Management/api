@@ -4,8 +4,8 @@ import {
   sendErrorResponse,
   sendSuccessResponse,
 } from "@/utils/responseFormatter";
-import { MESSAGES } from "@/constants";
-import { AuthApiService } from "@/services";
+import { MESSAGES, HTTP_STATUS } from "@/constants";
+import { AuthApiService, LicenseKeyService } from "@/services";
 import { User } from "@/models";
 import { ENV } from "@/lib";
 
@@ -39,7 +39,7 @@ const fetchTokenFromDB = async (): Promise<string | null> => {
 };
 
 // ====================== TOKEN MANAGER ======================
-const ensureValidToken = async (): Promise<string> => {
+export const ensureValidToken = async (): Promise<string> => {
   let token = await fetchTokenFromDB();
 
   if (token) {
@@ -160,15 +160,18 @@ export const generateLicenseKeys = asyncHandler(
 
     try {
       const token = await ensureValidToken();
-      const result = await AuthApiService.generateLicenseKeys(token, {
+      
+      // Gọi service để generate và lưu keys vào database
+      const result = await LicenseKeyService.generateAndSaveLicenseKeys(token, {
         quantity,
-        duration,
+        duration: duration as string,
       });
+
       if (!result.success) {
-        throw new Error("API_RETURNED_ERROR_EVEN_WITH_FRESH_TOKEN");
+        return sendErrorResponse(res, result.message, HTTP_STATUS.INTERNAL_SERVER_ERROR, result.error);
       }
 
-      return sendSuccessResponse(res, result, MESSAGES.SUCCESS.CREATED);
+      return sendSuccessResponse(res, result.data, result.message);
     }
     catch (error) {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);

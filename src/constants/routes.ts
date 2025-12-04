@@ -7,6 +7,7 @@ export const ROUTES = {
   LINKS: '/links',
   TICKETS: '/tickets',
   API: '/api-management',
+  LICENSE_KEYS: '/license-keys',
   // Health Check
   HEALTH: '/health',
 } as const;
@@ -55,6 +56,15 @@ export const LINK_ROUTES = {
   CREATE: '/',
   UPDATE: '/:id',
   DELETE: '/:id',
+} as const;
+
+export const LICENSE_KEY_ROUTES = {
+  BASE: '/',
+  GET_ALL: '/',
+  GET_STATS: '/stats',
+  GET_MY_KEYS: '/my-keys',
+  SYNC: '/sync',
+  PURCHASE: '/purchase',
 } as const;
 
 export const API_ROUTES = {

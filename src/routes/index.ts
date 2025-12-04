@@ -6,6 +6,7 @@ import { ROUTES } from "@/constants";
 import linkRoutes from "./link.routes";
 import ticketRoutes from "./ticket.routes";
 import apiRoutes from "./api.routes";
+import licenseKeyRoutes from "./license-key.routes";
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use(ROUTES.USERS, userRoutes);
 router.use(ROUTES.LINKS, linkRoutes);
 router.use(ROUTES.TICKETS, ticketRoutes);
 router.use(ROUTES.API, apiRoutes);
+router.use(ROUTES.LICENSE_KEYS, licenseKeyRoutes);
 
 export default router;
