@@ -3,10 +3,6 @@ dist
 logs
 .git
 .gitignore
-Dockerfile
-Dockerfile.*
-docker-compose.yml
-docker-compose.*
 .github
 npm-debug.log*
 *.tsbuildinfo
@@ -14,5 +10,10 @@ coverage
 tmp
 temp
 .env
-.env.*
+.env.local
+.env.*.local
+
+# Chỉ ignore local docker files, KHÔNG ignore docker config files
+# docker-compose.override.yml
+# docker-compose.local.yml
 

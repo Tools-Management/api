@@ -23,8 +23,8 @@
     "test:upload": "ts-node scripts/test-upload.ts",
     "test:upload-integration": "ts-node scripts/test-upload-integration.ts",
     "test:cloudinary-config": "ts-node scripts/test-cloudinary-config.ts",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest",
     "test:watch": "jest --watch"
   },

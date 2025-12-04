@@ -1,0 +1,17 @@
+node_modules/
+dist/
+*.js
+!.eslintrc.js
+!jest.config.js
+coverage/
+logs/
+tmp/
+temp/
+.env
+.env.*
+docker/
+nginx/
+certbot/
+scripts/*.js
+src/config/sequelize.config.js
+

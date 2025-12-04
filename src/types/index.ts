@@ -295,3 +295,56 @@ export interface ValidationResult {
   isValid: boolean;
   errors: string[];
 }
+
+// License Key Types
+export interface ILicenseKey {
+  id: number;
+  externalId: string; // _id từ external API
+  key: string;
+  isActive: boolean;
+  duration: string;
+  isUsed: boolean;
+  purchasedBy?: number | null; // userId của người mua
+  purchasedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ILicenseKeyCreationAttributes {
+  externalId: string;
+  key: string;
+  isActive: boolean;
+  duration: string;
+  isUsed?: boolean;
+  purchasedBy?: number | null;
+  purchasedAt?: Date | null;
+}
+
+export interface ILicenseKeyUpdateAttributes {
+  isUsed?: boolean;
+  purchasedBy?: number | null;
+  purchasedAt?: Date | null;
+  isActive?: boolean;
+}
+
+export interface IPurchaseLicenseRequest {
+  duration: string; // "7d", "30d", "1d", etc.
+}
+
+export interface IPurchaseLicenseResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    key: string;
+    duration: string;
+    purchasedAt: Date;
+  };
+}
+
+export interface ILicenseKeyQuery {
+  page?: number;
+  limit?: number;
+  duration?: string;
+  isUsed?: boolean;
+  isActive?: boolean;
+}
