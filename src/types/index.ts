@@ -160,11 +160,13 @@ export interface LogData {
   responseTime: number;
   ip: string;
   userAgent: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   requestBody?: any;
   error?: string;
 }
 
 // API Response Types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
@@ -236,6 +238,7 @@ export interface UploadedFile extends Express.Multer.File {
 export interface CloudinaryUploadOptions {
   folder?: string;
   public_id?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transformation?: any[];
   quality?: string | number;
   format?: string;

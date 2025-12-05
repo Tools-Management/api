@@ -125,6 +125,7 @@ const startServer = async () => {
       // Nếu đến đây → server chạy → thoát vòng lặp
       break;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       Logger.error(`Startup failed: ${error.message}`);
       Logger.warn('Retrying in 5 seconds...');

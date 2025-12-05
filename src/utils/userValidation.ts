@@ -81,6 +81,7 @@ export class UserValidationUtils {
   static validateRole(role?: string): ValidationResult {
     const errors: string[] = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (role && !Object.values(USER_ROLES).includes(role as any)) {
       errors.push(`Invalid role! Must be one of: ${Object.values(USER_ROLES).join(', ')}`);
     }
@@ -132,6 +133,7 @@ export class UserValidationUtils {
   /**
    * Check if user already exists by username or email
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async checkUserExists(username: string, email: string): Promise<{ exists: boolean; existingUser?: any }> {
     try {
       const existingUser = await User.findOne({
@@ -170,6 +172,7 @@ export class UserValidationUtils {
    * Determine if user should be active based on role
    */
   static shouldBeActive(role: string): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return [USER_ROLES.ROLE_SUPER_ADMIN, USER_ROLES.ROLE_ADMIN, USER_ROLES.ROLE_STAFF].includes(role as any);
   }
 
@@ -181,6 +184,7 @@ export class UserValidationUtils {
     email: string;
     password: string;
     role: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<{ user: any; success: boolean; error?: string }> {
     try {
       // Check if user already exists
