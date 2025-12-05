@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { deepOptimizeImageUrls, deriveOptimizeOptionsFromRequest, isCloudinaryUrl } from '@/utils/imageOptimizer';
+import { deepOptimizeImageUrls, deriveOptimizeOptionsFromRequest } from '@/utils/imageOptimizer';
 import { ENV } from '../lib';
 
 /**

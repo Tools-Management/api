@@ -72,6 +72,7 @@ export const createRateLimiter = (options: RateLimitOptions) => {
 
     // Override res.end to track successful/failed requests
     const originalEnd = res.end;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     res.end = function(chunk?: any, encoding?: any): Response {
       const isSuccess = res.statusCode >= 200 && res.statusCode < 400;
       const isFailure = res.statusCode >= 400;
