@@ -6,6 +6,7 @@ const CLOUDINARY_HOST_MARKERS = [
 	'cloudinary.com/',
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isPlainObject(input: any): boolean {
 	if (input === null || typeof input !== 'object') return false;
 	return Object.prototype.toString.call(input) === '[object Object]';
@@ -101,6 +102,7 @@ export function deriveOptimizeOptionsFromRequest(req?: Request): OptimizeOptions
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function deepOptimizeImageUrls(value: any, req?: Request, options?: OptimizeOptions, visited = new WeakSet()): any {
 	if (value === null || value === undefined) return value;
 	if (typeof value === 'string') {
@@ -109,8 +111,10 @@ export function deepOptimizeImageUrls(value: any, req?: Request, options?: Optim
 	if (typeof value !== 'object') return value;
 
 	// Normalize Sequelize instances or objects providing toJSON() to plain objects to avoid circular refs
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	if (typeof (value as any).toJSON === 'function') {
 		try {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			value = (value as any).toJSON();
 		} catch {
 			// ignore and proceed with original value
@@ -132,8 +136,10 @@ export function deepOptimizeImageUrls(value: any, req?: Request, options?: Optim
 		return value.map(v => deepOptimizeImageUrls(v, req, options, visited));
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const result: any = Array.isArray(value) ? [] : {};
 	for (const key of Object.keys(value)) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const current = (value as any)[key];
 		if (typeof current === 'string') {
 			result[key] = isCloudinaryUrl(current)
@@ -141,6 +147,7 @@ export function deepOptimizeImageUrls(value: any, req?: Request, options?: Optim
 				: current;
 		} else {
 			// Only recurse into arrays or plain objects to reduce risk of circular structures
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			if (Array.isArray(current) || isPlainObject(current) || typeof (current as any)?.toJSON === 'function') {
 				result[key] = deepOptimizeImageUrls(current, req, options, visited);
 			} else {

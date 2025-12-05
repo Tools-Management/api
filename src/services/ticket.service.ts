@@ -26,6 +26,7 @@ export class TicketService {
     const pageNum = Number(page) || 1;
     const limitNum = Number(limit) || 10;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
 
     if (ticketId) {

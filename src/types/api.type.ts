@@ -13,9 +13,11 @@ export interface IApiRegisterSuccess {
 }
 
 export interface IApiErrorDetail {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface IApiResponse<T = any> {
   success: boolean;
   message?: string;
