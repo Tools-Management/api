@@ -22,8 +22,8 @@ export const register = asyncHandler(
       });
 
       // Don't send OTP in response for security
-      const { otp: _otp, ...userData } = result;
-
+      const { otp, ...userData } = result;
+      void otp;
       sendSuccessResponse(
         res,
         {
@@ -123,8 +123,8 @@ export const resendOTP = asyncHandler(
       const result = await UserService.resendOTP(email);
 
       // Don't send OTP in response for security
-      const { otp: _otp, ...userData } = result;
-
+      const { otp, ...userData } = result;
+      void otp;
       sendSuccessResponse(
         res,
         {
