@@ -1,9 +1,8 @@
 #!/bin/sh
-set -euo pipefail
+set -e
 
 echo "[entrypoint] Bắt đầu khởi động..."
 
-# === ĐỢI MYSQL ===
 DB_HOST=${DB_HOST:-mysql}
 DB_PORT=${DB_PORT:-3306}
 
@@ -13,17 +12,15 @@ until nc -z "$DB_HOST" "$DB_PORT"; do
 done
 echo "[entrypoint] MySQL đã sẵn sàng!"
 
-# === CHẠY MIGRATION & SUPERADMIN (1 lần) ===
 MIGRATION_FLAG="/app/dist/.migrations_done"
 
 if [ ! -f "$MIGRATION_FLAG" ]; then
   echo "[entrypoint] Chạy migration..."
-  npm run db:migrate
+  npm run db:migrate || true
 
   echo "[entrypoint] Tạo super admin..."
   node dist/scripts/create-superadmin.prod.js || echo "[entrypoint] Super admin đã tồn tại"
 
-  # Tạo file flag trong dist (có quyền ghi)
   node -e "require('fs').writeFileSync('$MIGRATION_FLAG', 'done')"
 else
   echo "[entrypoint] Migration đã chạy trước đó."
