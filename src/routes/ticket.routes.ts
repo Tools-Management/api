@@ -4,7 +4,6 @@ import { authenticateToken, requireAdmin } from '@/middlewares/auth';
 import { generalRateLimiter } from '@/middlewares/rateLimiter';
 import { securityHeaders, sqlInjectionProtection, xssProtection, sanitizeRequest } from '@/middlewares/security';
 import { requestLogger } from '@/middlewares/logger';
-import { asyncHandler } from '@/middlewares/error';
 import { createTicket, getAllTickets, getTicketsByUserId, updateTicket } from '@/controllers/ticket.controller';
 
 const router = Router();
@@ -23,21 +22,21 @@ router.get(
   generalRateLimiter,
   authenticateToken,
   requireAdmin,
-  asyncHandler(getAllTickets)
+  getAllTickets
 );
 
 router.get(
   TICKET_ROUTES.GET_BY_USER_ID,
   generalRateLimiter,
   authenticateToken,
-  asyncHandler(getTicketsByUserId)
+  getTicketsByUserId
 );
 
 router.post(
   TICKET_ROUTES.CREATE,
   generalRateLimiter,
   authenticateToken,
-  asyncHandler(createTicket)
+  createTicket
 );
 
 router.put(
@@ -45,7 +44,7 @@ router.put(
   generalRateLimiter,
   authenticateToken,
   requireAdmin,
-  asyncHandler(updateTicket)
+  updateTicket
 );
 
 

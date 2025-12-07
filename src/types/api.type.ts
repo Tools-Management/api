@@ -107,49 +107,49 @@ export interface IGenerateLicenseKeysRequest {
 }
 
 // Response khi thành công
-export interface IApiRegisterSuccessResponse
-  extends IApiResponse<IApiRegisterSuccess> {}
+export type IApiRegisterSuccessResponse
+  = IApiResponse<IApiRegisterSuccess>
 
 // Response khi lỗi
-export interface IApiRegisterErrorResponse extends IApiResponse<null> {}
+export type IApiRegisterErrorResponse = IApiResponse<null>
 
-export interface IApiGetMeSuccessResponse
-  extends IApiResponse<IApiUser> {}
-export interface IApiGetMeErrorResponse extends IApiResponse<null> {}
+export type IApiGetMeSuccessResponse
+  = IApiResponse<IApiUser>
+export type IApiGetMeErrorResponse = IApiResponse<null>
 
 // License Keys
-export interface IApiGetLicenseKeysSuccessResponse
-  extends IApiResponse<IExternalLicenseKey[]> {}
-export interface IApiGetLicenseKeysErrorResponse extends IApiResponse<null> {}
+export type IApiGetLicenseKeysSuccessResponse
+  = IApiResponse<IExternalLicenseKey[]>
+export type IApiGetLicenseKeysErrorResponse = IApiResponse<null>
 
 // Generate API trả về mảng string keys
-export interface IApiGenerateLicenseKeysSuccessResponse
-  extends IApiResponse<string[]> {}
-export interface IApiGenerateLicenseKeysErrorResponse
-  extends IApiResponse<null> {}
+export type IApiGenerateLicenseKeysSuccessResponse
+  = IApiResponse<string[]>
+export type IApiGenerateLicenseKeysErrorResponse
+  = IApiResponse<null>
 
-export interface IApiGetLicenseKeyByIdSuccessResponse
-  extends IApiResponse<ILicenseKey> {}
-export interface IApiGetLicenseKeyByIdErrorResponse
-  extends IApiResponse<null> {}
+export type IApiGetLicenseKeyByIdSuccessResponse
+  = IApiResponse<ILicenseKey>
+export type IApiGetLicenseKeyByIdErrorResponse
+  = IApiResponse<null>
 
-export interface IApiCreateLicenseKeySuccessResponse
-  extends IApiResponse<ILicenseKey> {}
-export interface IApiCreateLicenseKeyErrorResponse extends IApiResponse<null> {}
+export type IApiCreateLicenseKeySuccessResponse
+  = IApiResponse<ILicenseKey>
+export type IApiCreateLicenseKeyErrorResponse = IApiResponse<null>
 
-export interface IApiUpdateLicenseKeySuccessResponse
-  extends IApiResponse<ILicenseKey> {}
-export interface IApiUpdateLicenseKeyErrorResponse extends IApiResponse<null> {}
+export type IApiUpdateLicenseKeySuccessResponse
+  = IApiResponse<ILicenseKey>
+export type IApiUpdateLicenseKeyErrorResponse = IApiResponse<null>
 
 // License
-export interface IApiUpgradeLicenseSuccessResponse
-  extends IApiResponse<ILicenseKey[]> {}
-export interface IApiUpgradeLicenseErrorResponse extends IApiResponse<null> {}
+export type IApiUpgradeLicenseSuccessResponse
+  = IApiResponse<ILicenseKey[]>
+export type IApiUpgradeLicenseErrorResponse = IApiResponse<null>
 
-export interface IApiValidateLicenseSuccessResponse
-  extends IApiResponse<ILicenseResponse> {}
-export interface IApiValidateLicenseErrorResponse extends IApiResponse<null> {}
+export type IApiValidateLicenseSuccessResponse
+  = IApiResponse<ILicenseResponse>
+export type IApiValidateLicenseErrorResponse = IApiResponse<null>
 
-export interface IApiActivateLicenseSuccessResponse
-  extends IApiResponse<ILicenseResponse> {}
-export interface IApiActivateLicenseErrorResponse extends IApiResponse<null> {}
+export type IApiActivateLicenseSuccessResponse
+  = IApiResponse<ILicenseResponse>
+export type IApiActivateLicenseErrorResponse = IApiResponse<null>

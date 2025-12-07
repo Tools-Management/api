@@ -337,7 +337,7 @@ export class UserService {
         user: user.toJSON() as IUser,
         tokens,
       };
-    } catch (error) {
+    } catch {
       throw new Error("Invalid refresh token");
     }
   }
@@ -362,7 +362,7 @@ export class UserService {
       }
 
       return user.toJSON() as IUser;
-    } catch (error) {
+    } catch {
       throw new Error("Invalid token");
     }
   }

@@ -29,7 +29,7 @@ export function imageOptimizeMiddleware(req: Request, res: Response, next: NextF
 
             const optimized = unwrapData(body);
 			return originalJson(optimized);
-		} catch (_err) {
+		} catch {
 			return originalJson(body);
 		}
 	};

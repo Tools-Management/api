@@ -134,8 +134,5 @@ LicenseKey.init(
   }
 );
 
-// === ASSOCIATIONS ===
-LicenseKey.belongsTo(User, { foreignKey: 'purchased_by', as: 'purchaser' });
-
 export default LicenseKey;
 

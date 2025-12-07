@@ -4,7 +4,6 @@ import { authenticateToken, requireAdmin } from '@/middlewares/auth';
 import { generalRateLimiter } from '@/middlewares/rateLimiter';
 import { securityHeaders, sqlInjectionProtection, xssProtection, sanitizeRequest } from '@/middlewares/security';
 import { requestLogger } from '@/middlewares/logger';
-import { asyncHandler } from '@/middlewares/error';
 import { createLink, getAllLinks, updateLink } from '@/controllers/link.controller';
 
 const router = Router();
@@ -20,7 +19,7 @@ router.use(requestLogger);
 // GET /api/v1/tickets - Get all tickets
 router.get(
   LINK_ROUTES.GET_ALL,
-  asyncHandler(getAllLinks)
+  getAllLinks
 );
 
 
@@ -29,7 +28,7 @@ router.post(
   generalRateLimiter,
   authenticateToken,
   requireAdmin,
-  asyncHandler(createLink)
+  createLink
 );
 
 router.put(
@@ -37,7 +36,7 @@ router.put(
   generalRateLimiter,
   authenticateToken,
   requireAdmin,
-  asyncHandler(updateLink)
+  updateLink
 );
 
 

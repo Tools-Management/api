@@ -47,5 +47,13 @@ export const ENV = {
     NODE_ENV: process.env['NODE_ENV'],
     PORT: process.env['PORT'],
     HOST: process.env['HOST'],
+
+    // VNPay Configuration
+    VNPAY_TMN_CODE: process.env['VNPAY_TMN_CODE'],
+    VNPAY_HASH_SECRET: process.env['VNPAY_HASH_SECRET'],
+    VNPAY_URL: process.env['VNPAY_URL'],
+    VNPAY_API_URL: process.env['VNPAY_API_URL'],
+    VNPAY_RETURN_URL: process.env['VNPAY_RETURN_URL'],
+    VNPAY_IPN_URL: process.env['VNPAY_IPN_URL'],
     
 }

@@ -8,6 +8,7 @@ export const ROUTES = {
   TICKETS: '/tickets',
   API: '/api-management',
   LICENSE_KEYS: '/license-keys',
+  WALLET: '/wallet',
   // Health Check
   HEALTH: '/health',
 } as const;
@@ -83,6 +84,18 @@ export const API_ROUTES = {
     VALIDATE: '/licenses/validate',
     UPGRADE: '/licenses/upgrade',
   },
+} as const;
+
+export const WALLET_ROUTES = {
+  BASE: '/',
+  GET_BALANCE: '/balance',
+  CREATE_TOPUP: '/topup',
+  TOPUPS: '/topups',
+  TOPUP_DETAIL: '/topups/:topupCode',
+  GET_TOPUP_HISTORY: '/topup-history',
+  CANCEL_TOPUP: '/topup-cancel',
+  VNPAY_RETURN: '/vnpay/return',
+  VNPAY_IPN: '/vnpay/ipn',
 } as const;
 
 // Full API Paths (for documentation and testing)

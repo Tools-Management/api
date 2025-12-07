@@ -19,7 +19,6 @@ import { uploadSingleWithError } from '@/utils/multer';
 import { generalRateLimiter, strictRateLimiter, uploadRateLimiter } from '@/middlewares/rateLimiter';
 import { securityHeaders, requestSizeLimiter, sqlInjectionProtection, xssProtection, sanitizeRequest } from '@/middlewares/security';
 import { requestLogger } from '@/middlewares/logger';
-import { asyncHandler } from '@/middlewares/error';
 
 const router = Router();
 
@@ -76,7 +75,7 @@ router.get(
   generalRateLimiter,
   authenticateToken,
   requireStaff,
-  asyncHandler(getAllUsers)
+  getAllUsers
 );
 
 // GET /api/v1/users/search - Search users
@@ -86,7 +85,7 @@ router.get(
   validate(validateSearch),
   authenticateToken,
   requireStaff,
-  asyncHandler(searchUsers)
+  searchUsers
 );
 
 // GET /api/v1/users/role/:role - Get users by role
@@ -96,7 +95,7 @@ router.get(
   validate(validateRole),
   authenticateToken,
   requireAdmin,
-  asyncHandler(getUsersByRole)
+  getUsersByRole
 );
 
 // GET /api/v1/users/profile - Get user profile
@@ -104,7 +103,7 @@ router.get(
   USER_ROUTES.GET_PROFILE,
   generalRateLimiter,
   authenticateToken,
-  asyncHandler(getUserProfile)
+  getUserProfile
 );
 
 // GET /api/v1/users/:id - Get user by ID
@@ -114,7 +113,7 @@ router.get(
   validate(validateId),
   authenticateToken,
   requireStaff,
-  asyncHandler(getUserById)
+  getUserById
 );
 
 // PUT /api/v1/users/profile - Update user profile
@@ -123,7 +122,7 @@ router.put(
   strictRateLimiter,
   authenticateToken,
   validate(validateUpdateProfile),
-  asyncHandler(updateUserProfile)
+  updateUserProfile
 );
 
 // PUT /api/v1/users/profile/avatar - Update user avatar
@@ -132,7 +131,7 @@ router.put(
   uploadRateLimiter,
   authenticateToken,
   uploadSingleWithError('avatar'),
-  asyncHandler(updateUserAvatar)
+  updateUserAvatar
 );
 
 // PUT /api/v1/users/change-password - Change password
@@ -141,7 +140,7 @@ router.put(
   strictRateLimiter,
   authenticateToken,
   validate(validateChangePassword),
-  asyncHandler(changePassword)
+  changePassword
 );
 
 // DELETE /api/v1/users/:id - Delete user
@@ -151,7 +150,7 @@ router.delete(
   validate(validateId),
   authenticateToken,
   requireAdmin,
-  asyncHandler(deleteUser)
+  deleteUser
 );
 
 // PATCH /api/v1/users/:id/soft-delete - Soft delete user
@@ -161,7 +160,7 @@ router.patch(
   validate(validateId),
   authenticateToken,
   requireAdmin,
-  asyncHandler(softDeleteUser)
+  softDeleteUser
 );
 
 export default router; 
