@@ -14,6 +14,7 @@ export const errorHandler = (
   error: AppError,
   req: Request,
   res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
 ): void => {
   const statusCode = error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR;
@@ -44,7 +45,7 @@ export const notFoundHandler = (
   next(error);
 };
 
-export const asyncHandler = (fn: Function) => {
+export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };

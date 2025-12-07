@@ -32,6 +32,7 @@ async function createSuperAdmin() {
     Logger.info('Super Admin created successfully!')
     Logger.info(`   Email: ${email}`)
     Logger.info(`   Password: ${password}`)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     Logger.error(`Error: ${error.message}`)
   } finally {

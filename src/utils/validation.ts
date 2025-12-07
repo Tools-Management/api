@@ -30,9 +30,13 @@ export function sanitizeSearchInput(input: string): string {
  * Validate and sanitize pagination parameters
  */
 export function validatePaginationParams(pagination: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   page?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   limit?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sortBy?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sortOrder?: any;
 }): {
   page: number;
@@ -68,6 +72,7 @@ export function validatePaginationParams(pagination: {
 /**
  * Validate ID parameter
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validateId(id: any, fieldName: string = 'ID'): { isValid: boolean; value?: number; error?: string } {
   if (!id) {
     return { isValid: false, error: `${fieldName} is required` };
@@ -84,6 +89,7 @@ export function validateId(id: any, fieldName: string = 'ID'): { isValid: boolea
 /**
  * Validate multiple IDs
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validateIds(ids: any, fieldName: string = 'IDs'): { isValid: boolean; values?: number[]; error?: string } {
   if (!ids) {
     return { isValid: false, error: `${fieldName} are required` };
@@ -102,7 +108,7 @@ export function validateIds(ids: any, fieldName: string = 'IDs'): { isValid: boo
 /**
  * Validate price range
  */
-export function validatePriceRange(minPrice: any, maxPrice: any): { 
+export function validatePriceRange(minPrice: string, maxPrice: string): { 
   isValid: boolean; 
   min?: number; 
   max?: number; 
@@ -129,7 +135,7 @@ export function validatePriceRange(minPrice: any, maxPrice: any): {
 /**
  * Validate search term
  */
-export function validateSearchTerm(search: any): { isValid: boolean; value?: string; error?: string } {
+export function validateSearchTerm(search: string): { isValid: boolean; value?: string; error?: string } {
   if (!search || typeof search !== 'string') {
     return { isValid: false, error: 'Search term is required' };
   }
@@ -145,7 +151,7 @@ export function validateSearchTerm(search: any): { isValid: boolean; value?: str
 /**
  * Validate string field
  */
-export function validateStringField(value: any, fieldName: string, required: boolean = true): { 
+export function validateStringField(value: string | undefined, fieldName: string, required: boolean = true): { 
   isValid: boolean; 
   value?: string; 
   error?: string 
@@ -164,7 +170,7 @@ export function validateStringField(value: any, fieldName: string, required: boo
 /**
  * Validate numeric field
  */
-export function validateNumericField(value: any, fieldName: string, min: number = 0): { 
+export function validateNumericField(value: string | undefined, fieldName: string, min: number = 0): { 
   isValid: boolean; 
   value?: number; 
   error?: string 
@@ -188,7 +194,7 @@ export function validateNumericField(value: any, fieldName: string, min: number 
 /**
  * Validate boolean field
  */
-export function validateBooleanField(value: any, fieldName: string): { 
+export function validateBooleanField(value: string | undefined, fieldName: string): { 
   isValid: boolean; 
   value?: boolean; 
   error?: string 

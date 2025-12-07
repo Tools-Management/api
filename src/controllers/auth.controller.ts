@@ -23,7 +23,7 @@ export const register = asyncHandler(
 
       // Don't send OTP in response for security
       const { otp, ...userData } = result;
-
+      void otp;
       sendSuccessResponse(
         res,
         {
@@ -124,7 +124,7 @@ export const resendOTP = asyncHandler(
 
       // Don't send OTP in response for security
       const { otp, ...userData } = result;
-
+      void otp;
       sendSuccessResponse(
         res,
         {
@@ -171,10 +171,6 @@ export const login = asyncHandler(
       );
     }
     console.log("email", email);
-
-
-    
-
     try {
       const result = await UserService.authenticateUser(email, password);
 
@@ -239,6 +235,7 @@ export const logout = asyncHandler(
 export const refreshToken = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     // Get refresh token from cookies first, then from body as fallback
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const refreshToken = (req as any).refreshToken || req.body.refreshToken;
 
     if (!refreshToken) {
@@ -316,7 +313,7 @@ export const forgotPassword = asyncHandler(
         { message: MESSAGES.SUCCESS.AUTH.PASSWORD_RESET_EMAIL_SENT },
         MESSAGES.SUCCESS.AUTH.PASSWORD_RESET_EMAIL_SENT
       );
-    } catch (error) {
+    } catch {
       sendErrorResponse(
         res,
         MESSAGES.ERROR.AUTH.FAILED_TO_SEND_PASSWORD_RESET_EMAIL,
@@ -344,7 +341,7 @@ export const resetPassword = asyncHandler(
         { message: MESSAGES.SUCCESS.AUTH.PASSWORD_RESET_SUCCESS },
         MESSAGES.SUCCESS.AUTH.PASSWORD_RESET_SUCCESS
       );
-    } catch (error) {
+    } catch {
       sendErrorResponse(
         res,
         MESSAGES.ERROR.AUTH.FAILED_TO_RESET_PASSWORD,

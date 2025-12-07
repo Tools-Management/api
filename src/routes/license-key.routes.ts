@@ -4,7 +4,6 @@ import { authenticateToken, requireAdmin, requireSuperAdmin } from '@/middleware
 import { generalRateLimiter } from '@/middlewares/rateLimiter';
 import { securityHeaders, sqlInjectionProtection, xssProtection, sanitizeRequest } from '@/middlewares/security';
 import { requestLogger } from '@/middlewares/logger';
-import { asyncHandler } from '@/middlewares/error';
 import {
   syncLicenseKeys,
   purchaseLicenseKey,
@@ -33,7 +32,7 @@ router.post(
   generalRateLimiter,
   authenticateToken,
   requireSuperAdmin,
-  asyncHandler(syncLicenseKeys)
+  syncLicenseKeys
 );
 
 /**
@@ -46,7 +45,7 @@ router.post(
   LICENSE_KEY_ROUTES.PURCHASE,
   generalRateLimiter,
   authenticateToken,
-  asyncHandler(purchaseLicenseKey)
+  purchaseLicenseKey
 );
 
 /**
@@ -59,7 +58,7 @@ router.get(
   generalRateLimiter,
   authenticateToken,
   requireAdmin,
-  asyncHandler(getAllLicenseKeys)
+  getAllLicenseKeys
 );
 
 /**
@@ -70,7 +69,7 @@ router.get(
   LICENSE_KEY_ROUTES.GET_MY_KEYS,
   generalRateLimiter,
   authenticateToken,
-  asyncHandler(getMyLicenseKeys)
+  getMyLicenseKeys
 );
 
 /**
@@ -81,8 +80,7 @@ router.get(
   LICENSE_KEY_ROUTES.GET_STATS,
   generalRateLimiter,
   authenticateToken,
-  requireAdmin,
-  asyncHandler(getLicenseKeyStats)
+  getLicenseKeyStats
 );
 
 /**
@@ -94,7 +92,7 @@ router.delete(
   generalRateLimiter,
   authenticateToken,
   requireAdmin,
-  asyncHandler(deleteLicenseKey)
+  deleteLicenseKey
 );
 
 export default router;

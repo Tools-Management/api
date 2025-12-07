@@ -76,6 +76,7 @@ export class UserService {
   static async checkUserExists(
     username: string,
     email: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<{ exists: boolean; existingUser?: any }> {
     return await UserValidationUtils.checkUserExists(username, email);
   }
@@ -296,6 +297,7 @@ export class UserService {
 
     // Return user data without password and tokens
     const userData = user.toJSON() as IUser;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (userData as any).password; // Remove password from response
 
     return {
@@ -335,7 +337,7 @@ export class UserService {
         user: user.toJSON() as IUser,
         tokens,
       };
-    } catch (error) {
+    } catch {
       throw new Error("Invalid refresh token");
     }
   }
@@ -360,7 +362,7 @@ export class UserService {
       }
 
       return user.toJSON() as IUser;
-    } catch (error) {
+    } catch {
       throw new Error("Invalid token");
     }
   }

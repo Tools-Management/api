@@ -26,6 +26,7 @@ export const uploadToCloudinary = (
   options: CloudinaryUploadOptions = {}
 ): Promise<CloudinaryUploadResult> => {
   return new Promise((resolve) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const uploadOptions: any = {
       resource_type: 'auto',
       ...options,

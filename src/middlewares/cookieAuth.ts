@@ -15,7 +15,9 @@ export const extractTokensFromCookies = (
   const refreshToken = req.cookies?.refresh_token;
 
   // Add tokens to request object for easy access
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (req as any).accessToken = accessToken;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (req as any).refreshToken = refreshToken;
 
   next();

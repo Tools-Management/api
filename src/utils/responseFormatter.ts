@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { HTTP_STATUS, MESSAGES } from '@/constants';
 import { ApiResponse } from '@/types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sendResponse = <T = any>(
   res: Response,
   statusCode: number = HTTP_STATUS.OK,
@@ -20,6 +21,7 @@ export const sendResponse = <T = any>(
   res.status(statusCode).json(response);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sendSuccessResponse = <T = any>(
   res: Response,
   data?: T,

@@ -134,6 +134,7 @@ export class AuthApiService {
       );
 
       return response.data as string[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Generate license keys error:', error);
       throw error;

@@ -11,6 +11,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction): 
   Logger.info(formatRequest(req.method, req.originalUrl, 0, 0, req.ip || 'unknown', 'Request started'));
 
   const originalEnd = res.end;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   res.end = function (chunk?: any, encoding?: any): Response {
     const responseTime = Date.now() - startTime;
     Logger.info(formatRequest(req.method, req.originalUrl, res.statusCode, responseTime, req.ip || 'unknown'));
@@ -21,6 +22,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction): 
 };
 
 export const errorLogger = (error: Error, req: Request, res: Response, next: NextFunction): void => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const responseTime = Date.now() - (req as any).startTime || 0;
   Logger.error(formatRequest(
     req.method,
@@ -35,6 +37,7 @@ export const errorLogger = (error: Error, req: Request, res: Response, next: Nex
 
 export const performanceMonitor = (req: Request, res: Response, next: NextFunction): void => {
   const startTime = Date.now();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (req as any).startTime = startTime;
 
   res.on('finish', () => {

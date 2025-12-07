@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { deepOptimizeImageUrls, deriveOptimizeOptionsFromRequest, isCloudinaryUrl } from '@/utils/imageOptimizer';
+import { deepOptimizeImageUrls, deriveOptimizeOptionsFromRequest } from '@/utils/imageOptimizer';
 import { ENV } from '../lib';
 
 /**
@@ -13,34 +13,13 @@ export function imageOptimizeMiddleware(req: Request, res: Response, next: NextF
     }
 
 	const originalJson = res.json.bind(res);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const jsonOverride = (body?: any): Response => {
 		try {
 			if (!body) return originalJson(body);
-            const collectCloudinaryUrls = (val: any, acc: string[] = [], max = 5, visited = new WeakSet()): string[] => {
-                if (acc.length >= max || val === null || val === undefined) return acc;
-                if (typeof val === 'string') {
-                    if (isCloudinaryUrl(val) && acc.length < max) acc.push(val);
-                    return acc;
-                }
-                if (typeof val !== 'object') return acc;
-                if (visited.has(val as object)) return acc;
-                visited.add(val as object);
-                if (Array.isArray(val)) {
-                    for (const v of val) {
-                        collectCloudinaryUrls(v, acc, max, visited);
-                        if (acc.length >= max) break;
-                    }
-                    return acc;
-                }
-                for (const k of Object.keys(val)) {
-                    collectCloudinaryUrls(val[k], acc, max, visited);
-                    if (acc.length >= max) break;
-                }
-                return acc;
-            };
 
-            
-			// Không tối ưu nếu controller đã định dạng { success, message, data }
+            // Không tối ưu nếu controller đã định dạng { success, message, data }
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const unwrapData = (payload: any) => {
 				if (payload && typeof payload === 'object' && 'data' in payload && 'success' in payload) {
 					return { ...payload, data: deepOptimizeImageUrls(payload.data, req, deriveOptimizeOptionsFromRequest(req)) };
@@ -50,10 +29,11 @@ export function imageOptimizeMiddleware(req: Request, res: Response, next: NextF
 
             const optimized = unwrapData(body);
 			return originalJson(optimized);
-		} catch (_err) {
+		} catch {
 			return originalJson(body);
 		}
 	};
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	(res as any).json = jsonOverride;
 
 	return next();

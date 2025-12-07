@@ -15,7 +15,9 @@ export const authenticateToken = async (
   try {
     const authHeader = req.headers.authorization;
     let token = JWTUtils.extractTokenFromHeader(authHeader);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!token && (req as any).cookies?.access_token) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       token = (req as any).cookies.access_token;
     }
 
@@ -39,7 +41,7 @@ export const authenticateToken = async (
     };
 
     next();
-  } catch (error) {
+  } catch {
     return sendErrorResponse(
       res,
       MESSAGES.ERROR.AUTH.INVALID_ACCESS_TOKEN,
@@ -111,7 +113,7 @@ export const optionalAuth = async (
     }
 
     next();
-  } catch (error) {
+  } catch {
     // Continue without authentication
     next();
   }

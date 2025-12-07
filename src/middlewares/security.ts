@@ -64,6 +64,7 @@ export const sqlInjectionProtection = (req: Request, res: Response, next: NextFu
     /(\bUPDATE\s+SET\b)/i,
   ];
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const checkForSqlInjection = (obj: any): boolean => {
     if (typeof obj === 'string') {
       return sqlPatterns.some(pattern => pattern.test(obj));
@@ -99,6 +100,7 @@ export const xssProtection = (req: Request, res: Response, next: NextFunction): 
     /on\w+\s*=/gi,
   ];
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const checkForXSS = (obj: any): boolean => {
     if (typeof obj === 'string') {
       return xssPatterns.some(pattern => pattern.test(obj));
@@ -149,6 +151,7 @@ export const adminIpWhitelist = ipWhitelist([
 
 // Request sanitization
 export const sanitizeRequest = (req: Request, _res: Response, next: NextFunction): void => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sanitize = (obj: any): any => {
     if (typeof obj === 'string') {
       return obj
@@ -158,9 +161,10 @@ export const sanitizeRequest = (req: Request, _res: Response, next: NextFunction
         .trim();
     }
     if (typeof obj === 'object' && obj !== null) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sanitized: any = Array.isArray(obj) ? [] : {};
       for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
           sanitized[key] = sanitize(obj[key]);
         }
       }

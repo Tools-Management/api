@@ -12,6 +12,7 @@ const fileFilter = (
   cb: multer.FileFilterCallback
 ): void => {
   // Kiểm tra MIME type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (UPLOAD_CONSTANTS.ALLOWED_IMAGE_TYPES.includes(file.mimetype as any)) {
     cb(null, true);
   } else {
@@ -62,10 +63,13 @@ export const handleUploadError = (): multer.Multer => {
  * Wrapper middleware để xử lý lỗi upload
  */
 export const createUploadMiddleware = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   uploadFunction: any,
   errorMessage: string = MESSAGES.ERROR.INTERNAL_ERROR
 ) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (req: Request, res: any, next: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     uploadFunction(req, res, (err: any) => {
       if (err instanceof multer.MulterError) {
         if (err.code === 'LIMIT_FILE_SIZE') {

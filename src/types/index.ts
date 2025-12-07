@@ -91,6 +91,38 @@ export enum TICKET_STATUS {
   CLOSED = 'closed',
 }
 
+export enum ORDER_STATUS {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  REFUNDED = 'refunded',
+  FAILED = 'failed',
+}
+
+export enum TOPUP_STATUS {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  REFUNDED = 'refunded',
+  FAILED = 'failed',
+}
+
+export enum PAYMENT_STATUS {
+  UNPAID = 'unpaid',
+  PAID = 'paid',
+  REFUNDED = 'refunded',
+  PARTIALLY_REFUNDED = 'partially_refunded',
+}
+
+export enum ORDER_TYPE {
+  LICENSE_KEY = 'license_key',
+  PRODUCT = 'product',
+  SERVICE = 'service',
+  OTHER = 'other',
+}
+
 export interface ILinksCreationAttributes {
   type: LINK_TYPES;
   link: string;
@@ -160,11 +192,13 @@ export interface LogData {
   responseTime: number;
   ip: string;
   userAgent: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   requestBody?: any;
   error?: string;
 }
 
 // API Response Types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
@@ -236,6 +270,7 @@ export interface UploadedFile extends Express.Multer.File {
 export interface CloudinaryUploadOptions {
   folder?: string;
   public_id?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transformation?: any[];
   quality?: string | number;
   format?: string;
@@ -337,6 +372,7 @@ export interface IPurchaseLicenseResponse {
   data?: {
     key: string;
     duration: string;
+    price: number;
     purchasedAt: Date;
   };
 }
@@ -348,3 +384,9 @@ export interface ILicenseKeyQuery {
   isUsed?: boolean;
   isActive?: boolean;
 }
+
+// Export Wallet, Topup, and Order types
+export * from './wallet';
+
+// Export Payment Gateway types
+export * from './payment-gateway';

@@ -9,7 +9,6 @@ import {
   sanitizeRequest,
 } from "@/middlewares/security";
 import { requestLogger } from "@/middlewares/logger";
-import { asyncHandler } from "@/middlewares/error";
 import {
   activateLicense,
   createLicenseKey,
@@ -32,12 +31,12 @@ router.use(sanitizeRequest);
 router.use(requestLogger);
 
 //LICENSE KEYS
-router.get(API_ROUTES.LICENSE_KEYS.GET_ALL, asyncHandler(getLicenseKeys));
+router.get(API_ROUTES.LICENSE_KEYS.GET_ALL, getLicenseKeys);
 
 router.get(
   API_ROUTES.LICENSE_KEYS.GET_BY_ID,
   authenticateToken,
-  asyncHandler(getLicenseKeyById)
+  getLicenseKeyById
 );
 
 router.post(
@@ -45,7 +44,7 @@ router.post(
   generalRateLimiter,
   authenticateToken,
   requireSuperAdmin,
-  asyncHandler(createLicenseKey)
+  createLicenseKey
 );
 
 router.post(
@@ -53,7 +52,7 @@ router.post(
   generalRateLimiter,
   authenticateToken,
   requireSuperAdmin,
-  asyncHandler(generateLicenseKeys)
+  generateLicenseKeys
 );
 
 router.put(
@@ -61,7 +60,7 @@ router.put(
   generalRateLimiter,
   authenticateToken,
   requireSuperAdmin,
-  asyncHandler(updateLicenseKey)
+  updateLicenseKey
 );
 
 router.delete(
@@ -69,7 +68,7 @@ router.delete(
   generalRateLimiter,
   authenticateToken,
   requireSuperAdmin,
-  asyncHandler(deleteLicenseKey)
+  deleteLicenseKey
 );
 
 //LICENSES
@@ -78,7 +77,7 @@ router.post(
   generalRateLimiter,
   authenticateToken,
   requireSuperAdmin,
-  asyncHandler(upgradeLicense)
+  upgradeLicense
 );
 
 router.post(
@@ -86,7 +85,7 @@ router.post(
   generalRateLimiter,
   authenticateToken,
   requireSuperAdmin,
-  asyncHandler(validateLicense)
+  validateLicense
 );
 
 router.post(
@@ -94,7 +93,7 @@ router.post(
   generalRateLimiter,
   authenticateToken,
   requireSuperAdmin,
-  asyncHandler(activateLicense)
+  activateLicense
 );
 
 export default router;
