@@ -85,7 +85,7 @@ export const getLicenseKeys = asyncHandler(
       }
 
       return sendSuccessResponse(res, result.data, MESSAGES.SUCCESS.FETCHED);
-    } catch (error) {
+    } catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -108,7 +108,7 @@ export const getLicenseKeyById = asyncHandler(
       }
 
       return sendSuccessResponse(res, result, MESSAGES.SUCCESS.FETCHED);
-    } catch (error) {
+    } catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -141,7 +141,7 @@ export const createLicenseKey = asyncHandler(
       }
 
       return sendSuccessResponse(res, result, MESSAGES.SUCCESS.CREATED);
-    } catch (error) {
+    } catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -173,7 +173,7 @@ export const generateLicenseKeys = asyncHandler(
 
       return sendSuccessResponse(res, result.data, result.message);
     }
-    catch (error) {
+    catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -209,7 +209,7 @@ export const updateLicenseKey = asyncHandler(
 
       return sendSuccessResponse(res, result, MESSAGES.SUCCESS.UPDATED);
     }
-    catch (error) {
+    catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -225,7 +225,7 @@ export const deleteLicenseKey = asyncHandler(
       const token = await ensureValidToken();
       await AuthApiService.deleteLicenseKey(token, id);
     }
-    catch (error) {
+    catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -257,7 +257,7 @@ export const upgradeLicense = asyncHandler(
 
     return sendSuccessResponse(res, result, MESSAGES.SUCCESS.UPGRADED);
   }
-  catch (error) {
+  catch {
     return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
   }
 });
@@ -285,7 +285,7 @@ export const validateLicense = asyncHandler(
 
       return sendSuccessResponse(res, result, MESSAGES.SUCCESS.VALIDATED);
     }
-    catch (error) {
+    catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -317,7 +317,7 @@ export const activateLicense = asyncHandler(
 
       return sendSuccessResponse(res, result, MESSAGES.SUCCESS.ACTIVATED);
     }
-    catch (error) {
+    catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }

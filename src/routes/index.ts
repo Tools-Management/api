@@ -7,6 +7,7 @@ import linkRoutes from "./link.routes";
 import ticketRoutes from "./ticket.routes";
 import apiRoutes from "./api.routes";
 import licenseKeyRoutes from "./license-key.routes";
+import walletRoutes from "./wallet.routes";
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use(ROUTES.LINKS, linkRoutes);
 router.use(ROUTES.TICKETS, ticketRoutes);
 router.use(ROUTES.API, apiRoutes);
 router.use(ROUTES.LICENSE_KEYS, licenseKeyRoutes);
+router.use(ROUTES.WALLET, walletRoutes);
 
 export default router;

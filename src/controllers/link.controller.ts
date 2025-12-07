@@ -32,9 +32,9 @@ export const createLink = asyncHandler(async (req: Request, res: Response): Prom
   }
 });
 
-export const updateLink = asyncHandler(async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+export const updateLink = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = req.params.id;
+    const id = req.params['id'];
     if (!id) {
       return sendErrorResponse(res, MESSAGES.ERROR.LINK.REQUIRED_ID);
     }

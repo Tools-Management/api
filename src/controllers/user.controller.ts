@@ -243,7 +243,7 @@ export const searchUsers = asyncHandler(async (req: Request, res: Response): Pro
   const { search } = req.query;
   
   // Validate search term
-  const searchValidation = validateSearchTerm(search);
+  const searchValidation = validateSearchTerm(search as string);
   if (!searchValidation.isValid) {
     return sendValidationErrorResponse(res, searchValidation.error!);
   }

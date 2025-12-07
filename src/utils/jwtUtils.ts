@@ -66,7 +66,7 @@ export class JWTUtils {
       return jwt.verify(token, this.ACCESS_TOKEN_SECRET, {
         algorithms: [JWT_CONSTANTS.ALGORITHM as jwt.Algorithm],
       }) as DecodedToken;
-    } catch (error) {
+    } catch {
       throw new Error(MESSAGES.ERROR.AUTH.INVALID_ACCESS_TOKEN);
     }
   }
@@ -79,7 +79,7 @@ export class JWTUtils {
       return jwt.verify(token, this.REFRESH_TOKEN_SECRET, {
         algorithms: [JWT_CONSTANTS.ALGORITHM as jwt.Algorithm],
       }) as DecodedToken;
-    } catch (error) {
+    } catch {
       throw new Error(MESSAGES.ERROR.AUTH.INVALID_REFRESH_TOKEN);
     }
   }
@@ -90,7 +90,7 @@ export class JWTUtils {
   static decodeToken(token: string): DecodedToken | null {
     try {
       return jwt.decode(token) as DecodedToken;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -105,7 +105,7 @@ export class JWTUtils {
       
       const currentTime = Math.floor(Date.now() / 1000);
       return decoded.exp < currentTime;
-    } catch (error) {
+    } catch {
       return true;
     }
   }

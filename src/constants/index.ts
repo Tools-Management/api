@@ -77,6 +77,30 @@ export const MESSAGES = {
       PRODUCT_IMAGES_SUCCESS: 'Product images uploaded successfully',
       IMAGE_DELETED_SUCCESS: 'Image deleted successfully',
       IMAGES_DELETED_SUCCESS: 'Images deleted successfully',
+    },
+    WALLET: {
+      WALLET_RETRIEVED_SUCCESS: 'Wallet retrieved successfully',
+      WALLET_CREATED_SUCCESS: 'Wallet created successfully',
+      WALLET_BALANCE_RETRIEVED_SUCCESS: 'Wallet balance retrieved successfully',
+      TOPUP_REQUEST_CREATED_SUCCESS: 'Topup request created successfully',
+      TOPUP_COMPLETED_SUCCESS: 'Topup completed successfully',
+      TOPUP_HISTORY_RETRIEVED_SUCCESS: 'Topup history retrieved successfully',
+      TOPUP_DETAIL_RETRIEVED_SUCCESS: 'Topup detail retrieved successfully',
+      TOPUP_CANCELLED_SUCCESS: 'Topup cancelled successfully',
+      TRANSACTION_ALREADY_PROCESSED: 'Transaction already processed',
+      TRANSACTION_MARKED_AS_FAILED: 'Transaction marked as failed',
+    },
+    PAYMENT: {
+      PAYMENT_VERIFIED_SUCCESS: 'Payment verified successfully',
+      PAYMENT_FAILED: 'Payment failed',
+      INVALID_SIGNATURE: 'Invalid payment signature',
+      AMOUNT_MISMATCH: 'Payment amount mismatch',
+      ORDER_NOT_FOUND: 'Payment order not found',
+      WALLET_NOT_FOUND: 'Wallet not found for payment',
+      INSUFFICIENT_BALANCE: 'Insufficient wallet balance',
+      PAYMENT_CANCELLED: 'Payment cancelled by user',
+      PAYMENT_EXPIRED: 'Payment expired',
+      GATEWAY_ERROR: 'Payment gateway error',
     }
   },
   ERROR: {
@@ -187,6 +211,16 @@ export const MESSAGES = {
       REQUIRED_PUBLIC_ID: 'Public ID is required',
       REQUIRED_IMAGE_URLS: 'Image URLs array is required',
       INVALID_IMAGE_URLS: 'All image URLs must be valid strings',
+    },
+    PAYMENT: {
+      INVALID_SIGNATURE: 'Invalid payment signature',
+      AMOUNT_MISMATCH: 'Payment amount mismatch',
+      ORDER_NOT_FOUND: 'Payment order not found',
+      WALLET_NOT_FOUND: 'Wallet not found for payment',
+      INSUFFICIENT_BALANCE: 'Insufficient wallet balance',
+      PAYMENT_CANCELLED: 'Payment cancelled by user',
+      PAYMENT_EXPIRED: 'Payment expired',
+      GATEWAY_ERROR: 'Payment gateway error',
     }
   },
 } as const;
@@ -225,7 +259,13 @@ export const PAGINATION = {
   MIN_LIMIT: 1,
 } as const;
 
-
+// Price Constants
+export const PRICE_CONSTANTS = {
+  '30d': 300000,
+  '90d': 800000,
+  '180d': 1500000,
+  '365d': 2800000,
+} as const;
 
 // Performance Constants
 export const PERFORMANCE_CONSTANTS = {

@@ -3,6 +3,7 @@
   "ext": "ts,js",
   "ignore": ["src/**/*.spec.ts"],
   "exec": "ts-node -r tsconfig-paths/register src/server.ts",
+  "exitcrash": true,
   "env": {
     "NODE_ENV": "development"
   }

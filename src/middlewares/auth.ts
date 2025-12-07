@@ -41,7 +41,7 @@ export const authenticateToken = async (
     };
 
     next();
-  } catch (error) {
+  } catch {
     return sendErrorResponse(
       res,
       MESSAGES.ERROR.AUTH.INVALID_ACCESS_TOKEN,
@@ -113,7 +113,7 @@ export const optionalAuth = async (
     }
 
     next();
-  } catch (error) {
+  } catch {
     // Continue without authentication
     next();
   }

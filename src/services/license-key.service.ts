@@ -1,5 +1,6 @@
-import { MESSAGES } from '@/constants';
-import { LicenseKey, User } from '@/models';
+import { MESSAGES, PRICE_CONSTANTS } from '@/constants';
+import { WalletService } from '@/services/wallet.service';
+import { LicenseKey, User, UserWallet } from '@/models';
 import {
   ApiResponse,
   ILicenseKey,
@@ -203,7 +204,7 @@ export class LicenseKeyService {
 
   /**
    * Mua license key
-   * Tìm key chưa dùng theo duration và đánh dấu là đã sử dụng
+   * Kiểm tra số dư ví, trừ tiền và đánh dấu key đã sử dụng
    */
   static async purchaseLicenseKey(
     userId: number,
@@ -211,6 +212,25 @@ export class LicenseKeyService {
   ): Promise<IPurchaseLicenseResponse> {
     try {
       const { duration } = data;
+
+      // Kiểm tra duration hợp lệ
+      if (!PRICE_CONSTANTS[duration as keyof typeof PRICE_CONSTANTS]) {
+        return {
+          success: false,
+          message: `Invalid duration: ${duration}`,
+        };
+      }
+
+      const price = PRICE_CONSTANTS[duration as keyof typeof PRICE_CONSTANTS];
+
+      // Kiểm tra số dư ví
+      const balanceResult = await WalletService.getBalance(userId);
+      if (!balanceResult.success || (balanceResult.balance || 0) < price) {
+        return {
+          success: false,
+          message: MESSAGES.ERROR.PAYMENT.INSUFFICIENT_BALANCE,
+        };
+      }
 
       // Tìm key chưa sử dụng với duration tương ứng
       const availableKey = await LicenseKey.findOne({
@@ -229,6 +249,23 @@ export class LicenseKeyService {
         };
       }
 
+      // Trừ tiền từ ví
+      const wallet = await UserWallet.findOne({ where: { userId } });
+
+      if (!wallet) {
+        return {
+          success: false,
+          message: MESSAGES.ERROR.PAYMENT.WALLET_NOT_FOUND,
+        };
+      }
+
+      const newBalance = Number(wallet.balance) - price;
+
+      await wallet.update({
+        balance: newBalance,
+        lastTransactionAt: new Date(),
+      });
+
       // Đánh dấu key là đã sử dụng
       const purchasedAt = new Date();
       await availableKey.update({
@@ -243,6 +280,7 @@ export class LicenseKeyService {
         data: {
           key: availableKey.key,
           duration: availableKey.duration,
+          price: price,
           purchasedAt: purchasedAt,
         },
       };

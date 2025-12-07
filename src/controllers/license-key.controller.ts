@@ -148,13 +148,12 @@ export const getLicenseKeyStats = asyncHandler(async (_req: Request, res: Respon
  * Admin only - Xóa trong DB và External API
  */
 export const deleteLicenseKey = asyncHandler(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = parseInt(req.params['id']);
-
-      if (isNaN(id)) {
-        return sendErrorResponse(res, 'Invalid license key ID', HTTP_STATUS.BAD_REQUEST);
-      }
+      const id = req.params['id'];
+        if (!id) {
+          return sendErrorResponse(res, MESSAGES.ERROR.LINK.REQUIRED_ID);
+        }
 
       const token = await ensureValidToken();
 
@@ -162,7 +161,7 @@ export const deleteLicenseKey = asyncHandler(
         return sendErrorResponse(res, 'API token is required');
       }
       
-      const result = await LicenseKeyService.deleteLicenseKey(token, id);
+      const result = await LicenseKeyService.deleteLicenseKey(token, Number(id));
 
       if (!result.success) {
         return sendErrorResponse(res, result.message, HTTP_STATUS.INTERNAL_SERVER_ERROR, result.error);

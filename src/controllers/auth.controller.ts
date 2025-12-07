@@ -171,10 +171,6 @@ export const login = asyncHandler(
       );
     }
     console.log("email", email);
-
-
-    
-
     try {
       const result = await UserService.authenticateUser(email, password);
 
@@ -317,7 +313,7 @@ export const forgotPassword = asyncHandler(
         { message: MESSAGES.SUCCESS.AUTH.PASSWORD_RESET_EMAIL_SENT },
         MESSAGES.SUCCESS.AUTH.PASSWORD_RESET_EMAIL_SENT
       );
-    } catch (error) {
+    } catch {
       sendErrorResponse(
         res,
         MESSAGES.ERROR.AUTH.FAILED_TO_SEND_PASSWORD_RESET_EMAIL,
@@ -345,7 +341,7 @@ export const resetPassword = asyncHandler(
         { message: MESSAGES.SUCCESS.AUTH.PASSWORD_RESET_SUCCESS },
         MESSAGES.SUCCESS.AUTH.PASSWORD_RESET_SUCCESS
       );
-    } catch (error) {
+    } catch {
       sendErrorResponse(
         res,
         MESSAGES.ERROR.AUTH.FAILED_TO_RESET_PASSWORD,

@@ -55,9 +55,9 @@ export const getTicketsByUserId = asyncHandler(async (req: AuthenticatedRequest,
   }
 });
 
-export const updateTicket = asyncHandler(async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+export const updateTicket = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = req.params.id;
+    const id = req.params['id'];
     if (!id) {
       return sendErrorResponse(res, MESSAGES.ERROR.TICKET.REQUIRED_ID);
     }
