@@ -13,7 +13,7 @@ import {
 import { validate } from '@/middlewares/validator';
 import { AUTH_ROUTES } from '@/constants';
 import { extractTokensFromCookies } from '@/middlewares/cookieAuth';
-import { registerRateLimiter } from '@/middlewares';
+import { authRateLimiter, generalRateLimiter } from '@/middlewares';
 
 const router = Router();
 
@@ -94,7 +94,7 @@ const validateRefreshToken = [
 // POST /api/v1/auth/register - Register new user
 router.post(
   AUTH_ROUTES.REGISTER,
-  registerRateLimiter,
+  generalRateLimiter,
   validate(validateRegister),
   register
 );
@@ -102,6 +102,7 @@ router.post(
 // POST /api/v1/auth/verify-otp - Verify OTP and activate account
 router.post(
   AUTH_ROUTES.VERIFY_OTP,
+  authRateLimiter,
   validate(validateVerifyOTP),
   verifyOTP
 );
@@ -109,6 +110,7 @@ router.post(
 // POST /api/v1/auth/resend-otp - Resend OTP
 router.post(
   AUTH_ROUTES.RESEND_OTP,
+  authRateLimiter,
   validate(validateResendOTP),
   resendOTP
 );
@@ -137,6 +139,7 @@ router.post(
 // POST /api/v1/auth/forgot-password - Forgot password
 router.post(
   AUTH_ROUTES.FORGOT_PASSWORD,
+  authRateLimiter,
   validate(validateForgotPassword),
   forgotPassword
 );
@@ -144,6 +147,7 @@ router.post(
 // POST /api/v1/auth/reset-password - Reset password
 router.post(
   AUTH_ROUTES.RESET_PASSWORD,
+  authRateLimiter,
   validate(validateResetPassword),
   resetPassword
 );

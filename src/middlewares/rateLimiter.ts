@@ -97,6 +97,7 @@ export const authRateLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // 5 attempts per window
   message: 'Too many authentication attempts. Please try again later.',
+  skipFailedRequests: true, // skip failed requests
 });
 
 export const registerRateLimiter = createRateLimiter({
