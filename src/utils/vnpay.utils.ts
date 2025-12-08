@@ -3,22 +3,26 @@
  * Handle signature generation, verification, và data processing
  */
 
-import crypto from 'crypto';
-import { VNPAY_CONFIG, getVNPayConfig } from '@/config/vnpay.config';
-import { IVNPayResponse, IRequestWithIP } from '@/types';
-import moment from 'moment-timezone';
+import crypto from "crypto";
+import { VNPAY_CONFIG, getVNPayConfig } from "@/config/vnpay.config";
+import { IVNPayResponse, IRequestWithIP } from "@/types";
+import moment from "moment-timezone";
+
+moment.tz.setDefault("Asia/Ho_Chi_Minh");
 /**
  * Sort object keys alphabetically
  * VNPay requires params to be sorted for signature generation
  */
-export const sortObject = (obj: Record<string, string | number | boolean>): Record<string, string> => {
+export const sortObject = (
+  obj: Record<string, string | number | boolean>
+): Record<string, string> => {
   const sorted: Record<string, string> = {};
   const keys = Object.keys(obj).sort();
-  
+
   for (const key of keys) {
-    sorted[key] = encodeURIComponent(String(obj[key])).replace(/%20/g, '+');
+    sorted[key] = encodeURIComponent(String(obj[key])).replace(/%20/g, "+");
   }
-  
+
   return sorted;
 };
 
@@ -31,19 +35,19 @@ export const generateSecureHash = (
 ): string => {
   // Remove hash fields if present
   const cleanParams = { ...params };
-  delete cleanParams['vnp_SecureHash'];
-  delete cleanParams['vnp_SecureHashType'];
-  
+  delete cleanParams["vnp_SecureHash"];
+  delete cleanParams["vnp_SecureHashType"];
+
   // Sort and stringify
   const sortedParams = sortObject(cleanParams);
   const signData = Object.keys(sortedParams)
-    .map(key => `${key}=${sortedParams[key]}`)
-    .join('&');
-  
+    .map((key) => `${key}=${sortedParams[key]}`)
+    .join("&");
+
   // Create HMAC SHA512
   const hmac = crypto.createHmac(VNPAY_CONFIG.HASH_ALGORITHM, secretKey);
-  const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
-  
+  const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+
   return signed;
 };
 
@@ -57,10 +61,10 @@ export const verifyVNPaySignature = (
   try {
     const { hashSecret } = getVNPayConfig();
     const calculatedHash = generateSecureHash(params, hashSecret);
-    
+
     return calculatedHash === receivedHash;
   } catch (error) {
-    console.error('Error verifying VNPay signature:', error);
+    console.error("Error verifying VNPay signature:", error);
     return false;
   }
 };
@@ -71,9 +75,9 @@ export const verifyVNPaySignature = (
  */
 export const generateTopupCode = (): string => {
   const date = new Date();
-  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-  const randomStr = crypto.randomBytes(4).toString('hex').toUpperCase();
-  
+  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
+  const randomStr = crypto.randomBytes(4).toString("hex").toUpperCase();
+
   return `TOPUP_${dateStr}_${randomStr}`;
 };
 
@@ -83,21 +87,17 @@ export const generateTopupCode = (): string => {
  */
 export const generateOrderCode = (): string => {
   const date = new Date();
-  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-  const randomStr = crypto.randomBytes(4).toString('hex').toUpperCase();
-  
+  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
+  const randomStr = crypto.randomBytes(4).toString("hex").toUpperCase();
+
   return `ORDER_${dateStr}_${randomStr}`;
 };
 
 /**
  * Format date for VNPay (yyyyMMddHHmmss)
  */
-export const formatVNPayDate = (
-  date: Date = new Date(),
-): string => {
-  return moment(date)
-    .tz('Asia/Ho_Chi_Minh')
-    .format('YYYYMMDDHHmmss');
+export const formatVNPayDate = (): string => {
+  return moment().format("YYYYMMDDHHmmss");
 };
 
 /**
@@ -108,17 +108,17 @@ export const parseVNPayDate = (vnpDate: string): Date | null => {
     if (!vnpDate || vnpDate.length !== 14) {
       return null;
     }
-    
+
     const year = parseInt(vnpDate.slice(0, 4));
     const month = parseInt(vnpDate.slice(4, 6)) - 1;
     const day = parseInt(vnpDate.slice(6, 8));
     const hours = parseInt(vnpDate.slice(8, 10));
     const minutes = parseInt(vnpDate.slice(10, 12));
     const seconds = parseInt(vnpDate.slice(12, 14));
-    
+
     return new Date(year, month, day, hours, minutes, seconds);
   } catch (error) {
-    console.error('Error parsing VNPay date:', error);
+    console.error("Error parsing VNPay date:", error);
     return null;
   }
 };
@@ -141,25 +141,31 @@ export const fromVNPayAmount = (vnpAmount: number): number => {
 /**
  * Validate topup amount
  */
-export const validateTopupAmount = (amount: number): { isValid: boolean; error?: string } => {
+export const validateTopupAmount = (
+  amount: number
+): { isValid: boolean; error?: string } => {
   if (!amount || amount <= 0) {
-    return { isValid: false, error: 'Số tiền phải lớn hơn 0' };
+    return { isValid: false, error: "Số tiền phải lớn hơn 0" };
   }
-  
+
   if (amount < VNPAY_CONFIG.MIN_TOPUP_AMOUNT) {
-    return { 
-      isValid: false, 
-      error: `Số tiền tối thiểu là ${VNPAY_CONFIG.MIN_TOPUP_AMOUNT.toLocaleString('vi-VN')} VNĐ` 
+    return {
+      isValid: false,
+      error: `Số tiền tối thiểu là ${VNPAY_CONFIG.MIN_TOPUP_AMOUNT.toLocaleString(
+        "vi-VN"
+      )} VNĐ`,
     };
   }
-  
+
   if (amount > VNPAY_CONFIG.MAX_TOPUP_AMOUNT) {
-    return { 
-      isValid: false, 
-      error: `Số tiền tối đa là ${VNPAY_CONFIG.MAX_TOPUP_AMOUNT.toLocaleString('vi-VN')} VNĐ` 
+    return {
+      isValid: false,
+      error: `Số tiền tối đa là ${VNPAY_CONFIG.MAX_TOPUP_AMOUNT.toLocaleString(
+        "vi-VN"
+      )} VNĐ`,
     };
   }
-  
+
   return { isValid: true };
 };
 
@@ -167,12 +173,12 @@ export const validateTopupAmount = (amount: number): { isValid: boolean; error?:
  * Get client IP address from request
  */
 export const getClientIp = (req: IRequestWithIP): string => {
-  const forwarded = req.headers['x-forwarded-for'];
-  
+  const forwarded = req.headers["x-forwarded-for"];
+
   // Try to get IP from various sources, default to 0.0.0.0
-  let ip: string = '0.0.0.0';
-  
-  if (typeof forwarded === 'string' && forwarded) {
+  let ip: string = "0.0.0.0";
+
+  if (typeof forwarded === "string" && forwarded) {
     ip = forwarded as string;
   } else if (req.ip) {
     ip = req.ip as string;
@@ -183,15 +189,17 @@ export const getClientIp = (req: IRequestWithIP): string => {
   }
 
   // Extract first IP from comma-separated list
-  const firstIp = String(ip).split(',')[0];
-  return firstIp ? firstIp.trim() : '0.0.0.0';
+  const firstIp = String(ip).split(",")[0];
+  return firstIp ? firstIp.trim() : "0.0.0.0";
 };
 
 /**
  * Sanitize VNPay response data
  * Remove sensitive information for logging
  */
-export const sanitizeVNPayResponse = (response: IVNPayResponse): Partial<IVNPayResponse> => {
+export const sanitizeVNPayResponse = (
+  response: IVNPayResponse
+): Partial<IVNPayResponse> => {
   // Use destructuring to omit sensitive fields (safer than delete)
   const { vnp_SecureHash, ...sanitized } = response;
   void vnp_SecureHash; // Suppress unused variable warning
@@ -201,18 +209,20 @@ export const sanitizeVNPayResponse = (response: IVNPayResponse): Partial<IVNPayR
  * Check if transaction is in final state
  */
 export const isFinalState = (status: string): boolean => {
-  return ['completed', 'failed', 'refunded', 'cancelled'].includes(status);
+  return ["completed", "failed", "refunded", "cancelled"].includes(status);
 };
 
 /**
  * Build VNPay payment URL
  */
-export const buildVNPayUrl = (params: Record<string, string | number>): string => {
+export const buildVNPayUrl = (
+  params: Record<string, string | number>
+): string => {
   const { paymentUrl } = getVNPayConfig();
   const queryString = Object.keys(params)
-    .map(key => `${key}=${params[key]}`)
-    .join('&');
-  
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+
   return `${paymentUrl}?${queryString}`;
 };
 
@@ -232,4 +242,3 @@ export default {
   isFinalState,
   buildVNPayUrl,
 };
-

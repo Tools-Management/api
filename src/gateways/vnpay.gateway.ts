@@ -282,7 +282,6 @@ export class VNPayGateway implements IPaymentGateway {
         throw new Error("VNPay API URL not configured for refunds");
       }
 
-      const now = new Date();
       const refundAmount = Math.round(
         options.amount * VNPAY_CONFIG.AMOUNT_MULTIPLIER
       );
@@ -297,9 +296,9 @@ export class VNPayGateway implements IPaymentGateway {
         vnp_Amount: refundAmount,
         vnp_TransactionNo: gatewayTransactionNo,
         vnp_OrderInfo: options.reason || `Refund for ${orderRef}`,
-        vnp_TransactionDate: formatVNPayDate(now),
+        vnp_TransactionDate: formatVNPayDate(),
         vnp_CreateBy: options.performedBy || "system",
-        vnp_CreateDate: formatVNPayDate(now),
+        vnp_CreateDate: formatVNPayDate(),
         vnp_IpAddr: options.ipAddress || "127.0.0.1",
       };
 
