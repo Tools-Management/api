@@ -6,7 +6,7 @@
 import crypto from 'crypto';
 import { VNPAY_CONFIG, getVNPayConfig } from '@/config/vnpay.config';
 import { IVNPayResponse, IRequestWithIP } from '@/types';
-
+import moment from 'moment-timezone';
 /**
  * Sort object keys alphabetically
  * VNPay requires params to be sorted for signature generation
@@ -92,15 +92,12 @@ export const generateOrderCode = (): string => {
 /**
  * Format date for VNPay (yyyyMMddHHmmss)
  */
-export const formatVNPayDate = (date: Date = new Date()): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  
-  return `${year}${month}${day}${hours}${minutes}${seconds}`;
+export const formatVNPayDate = (
+  date: Date = new Date(),
+): string => {
+  return moment(date)
+    .tz('Asia/Ho_Chi_Minh')
+    .format('YYYYMMDDHHmmss');
 };
 
 /**
