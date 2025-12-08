@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/src/server.js",
     "dev": "nodemon --host 0.0.0.0",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "watch": "tsc --watch",
     "db:migrate": "sequelize-cli db:migrate --config src/config/sequelize.config.js",
     "db:migrate:undo": "sequelize-cli db:migrate:undo --config src/config/sequelize.config.js",
@@ -81,6 +81,7 @@
     "sequelize-cli": "^6.6.2",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2"
   }
