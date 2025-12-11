@@ -134,16 +134,15 @@ export class UserValidationUtils {
    * Check if user already exists by username or email
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static async checkUserExists(username: string, email: string): Promise<{ exists: boolean; existingUser?: any }> {
+  static async checkUserExists(email: string): Promise<{ exists: boolean; existingUser?: any }> {
     try {
       const existingUser = await User.findOne({
         where: {
           [Op.or]: [
-            { username },
             { email }
           ]
         },
-        attributes: ['id', 'username', 'email'] // Only select needed fields for performance
+        attributes: ['id', 'email'] // Only select needed fields for performance
       });
 
       return {
@@ -188,7 +187,7 @@ export class UserValidationUtils {
   }): Promise<{ user: any; success: boolean; error?: string }> {
     try {
       // Check if user already exists
-      const existenceCheck = await this.checkUserExists(userData.username, userData.email);
+      const existenceCheck = await this.checkUserExists(userData.email);
       if (existenceCheck.exists) {
         return {
           user: null,

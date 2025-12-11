@@ -38,6 +38,7 @@ export const USER_ROUTES = {
   CHANGE_PASSWORD: '/change-password',
   DELETE: '/:id',
   SOFT_DELETE: '/:id/soft-delete',
+  ADD_MONEY: '/:id/add-money',
 } as const;
 
 export const TICKET_ROUTES = {

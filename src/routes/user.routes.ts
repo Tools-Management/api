@@ -11,10 +11,11 @@ import {
   softDeleteUser,
   getUsersByRole,
   searchUsers,
+  addMoneyToWallet,
 } from '@/controllers/user.controller';
 import { validate } from '@/middlewares/validator';
 import { USER_ROUTES } from '@/constants';
-import { authenticateToken, requireAdmin, requireStaff } from '@/middlewares/auth';
+import { authenticateToken, requireAdmin, requireStaff, requireSuperAdmin } from '@/middlewares/auth';
 import { uploadSingleWithError } from '@/utils/multer';
 import { generalRateLimiter, strictRateLimiter, uploadRateLimiter } from '@/middlewares/rateLimiter';
 import { securityHeaders, requestSizeLimiter, sqlInjectionProtection, xssProtection, sanitizeRequest } from '@/middlewares/security';
@@ -67,6 +68,16 @@ const validateChangePassword = [
     .notEmpty()
     .isLength({ min: 6, max: 255 })
     .withMessage('New password must be at least 6 characters'),
+];
+
+const validateAddMoney = [
+  body('amount')
+    .isInt({ min: 1000, max: 10000000 })
+    .withMessage('Amount must be between 1,000 and 10,000,000 VND'),
+  body('notes')
+    .optional()
+    .isLength({ max: 500 })
+    .withMessage('Notes must not exceed 500 characters'),
 ];
 
 // GET /api/v1/users - Get all users
@@ -161,6 +172,16 @@ router.patch(
   authenticateToken,
   requireAdmin,
   softDeleteUser
+);
+
+// PUT /api/v1/users/:id/add-money - Add money to user's wallet (Admin only)
+router.put(
+  USER_ROUTES.ADD_MONEY,
+  strictRateLimiter,
+  validate([...validateId, ...validateAddMoney]),
+  authenticateToken,
+  requireSuperAdmin,
+  addMoneyToWallet
 );
 
 export default router; 

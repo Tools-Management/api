@@ -147,6 +147,12 @@ export interface IUser {
   updatedBy?: number | null;
   createdAt: Date;
   updatedAt: Date;
+  // Wallet information (when included in queries)
+  wallet?: {
+    balance: number;
+    currency: string;
+    isActive: boolean;
+  };
 }
 export interface UserCreationAttributes {
   username: string;
