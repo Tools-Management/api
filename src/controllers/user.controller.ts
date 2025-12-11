@@ -241,13 +241,65 @@ export const getUsersByRole = asyncHandler(async (req: Request, res: Response): 
 
 export const searchUsers = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { search } = req.query;
-  
+
   // Validate search term
   const searchValidation = validateSearchTerm(search as string);
   if (!searchValidation.isValid) {
     return sendValidationErrorResponse(res, searchValidation.error!);
   }
-  
+
   const users = await UserService.searchUsers(searchValidation.value!);
   sendSuccessResponse(res, users, MESSAGES.SUCCESS.FETCHED);
+});
+
+export const addMoneyToWallet = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const adminId = req.user?.userId;
+    if (!adminId) {
+      return sendErrorResponse(res, MESSAGES.ERROR.AUTH.REQUIRED_AUTH);
+    }
+
+    const { id } = req.params;
+    const { amount, notes } = req.body;
+
+    // Validate user ID
+    const idValidation = validateId(id, 'User ID');
+    if (!idValidation.isValid) {
+      return sendValidationErrorResponse(res, idValidation.error!);
+    }
+
+    // Validate amount
+    if (!amount || typeof amount !== 'number' || amount <= 0) {
+      return sendValidationErrorResponse(res, 'Amount must be a positive number');
+    }
+
+    // Validate notes (optional)
+    if (notes !== undefined && (typeof notes !== 'string' || notes.length > 500)) {
+      return sendValidationErrorResponse(res, 'Notes must be a string with maximum 500 characters');
+    }
+
+    const result = await UserService.addMoneyToWallet(
+      idValidation.value!,
+      amount,
+      adminId,
+      notes
+    );
+
+    if (!result.success) {
+      return sendErrorResponse(res, result.message);
+    }
+
+    sendSuccessResponse(res, {
+      message: result.message,
+      newBalance: result.newBalance,
+      amount: amount,
+      userId: idValidation.value!
+    }, 'Money added to wallet successfully');
+  } catch (error) {
+    if (error instanceof Error) {
+      sendErrorResponse(res, error.message);
+    } else {
+      sendErrorResponse(res, MESSAGES.ERROR.INTERNAL_ERROR);
+    }
+  }
 }); 

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import { User } from "@/models";
-import { IUser, TokenPair } from "@/types";
+import { User, UserWallet, WalletTopup } from "@/models";
+import { IUser, TokenPair, TOPUP_STATUS } from "@/types";
 import { USER_ROLES, OTP_CONSTANTS } from "@/constants";
 import { EmailService } from "./email.service";
 import { UserValidationUtils } from "@/utils/userValidation";
@@ -11,12 +11,17 @@ import { AuthApiService } from "./auth.api.service";
 
 export class UserService {
   /**
-   * Get all active users
+   * Get all active users with wallet balance
    */
   static async getAllUsers(): Promise<IUser[]> {
     return await User.findAll({
       where: { isActive: true },
       attributes: { exclude: ["password", "otp", "otpExpiresAt"] },
+      include: [{
+        model: UserWallet,
+        as: 'wallet',
+        attributes: ['balance', 'currency', 'isActive'],
+      }],
       order: [["createdAt", "DESC"]],
     });
   }
@@ -74,11 +79,10 @@ export class UserService {
    * Check if user exists (optimized version using utility)
    */
   static async checkUserExists(
-    username: string,
     email: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<{ exists: boolean; existingUser?: any }> {
-    return await UserValidationUtils.checkUserExists(username, email);
+    return await UserValidationUtils.checkUserExists(email);
   }
 
   /**
@@ -92,11 +96,10 @@ export class UserService {
   }): Promise<{ user: IUser; otp: string }> {
     // Check if user already exists using optimized utility
     const existenceCheck = await this.checkUserExists(
-      userData.username,
       userData.email
     );
     if (existenceCheck.exists) {
-      throw new Error("User with this username or email already exists");
+      throw new Error("User with this email already exists");
     }
 
     // Hash password using utility
@@ -476,5 +479,106 @@ export class UserService {
     // Update password
     await user.update({ password: hashedNewPassword });
     return true;
+  }
+
+  /**
+   * Add money to user's wallet (Admin only function)
+   * @param userId - User ID to add money to
+   * @param amount - Amount to add (in VND)
+   * @param adminId - Admin user ID performing the action
+   * @param notes - Optional notes for the transaction
+   */
+  static async addMoneyToWallet(
+    userId: number,
+    amount: number,
+    adminId: number,
+    notes?: string
+  ): Promise<{ success: boolean; message: string; newBalance?: number }> {
+    try {
+      // Validate amount
+      if (amount <= 0) {
+        throw new Error("Amount must be positive");
+      }
+
+      // Find user and check if active
+      const user = await User.findByPk(userId);
+      if (!user || !user.isActive) {
+        throw new Error("User not found or inactive");
+      }
+
+      // Find user's wallet
+      const wallet = await UserWallet.findOne({
+        where: { userId, isActive: true }
+      });
+
+      if (!wallet) {
+        throw new Error("User wallet not found");
+      }
+
+      // Get admin user for logging
+      const admin = await User.findByPk(adminId);
+      if (!admin || admin.role !== USER_ROLES.ROLE_SUPER_ADMIN) {
+        throw new Error("Unauthorized: Admin access required");
+      }
+
+      // Calculate new balance
+      const newBalance = Number(wallet.balance) + amount;
+
+      // Update wallet balance and last transaction time
+      await wallet.update({
+        balance: newBalance,
+        lastTransactionAt: new Date()
+      });
+
+      // Generate unique topup code for admin deposit
+      const generateTopupCode = (): string => {
+        const timestamp = Date.now().toString();
+        const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+        return `ADM_${timestamp}_${random}`;
+      };
+
+      let topupCode: string;
+      let isUnique = false;
+      do {
+        topupCode = generateTopupCode();
+        const existingTopup = await WalletTopup.findOne({
+          where: { topupCode }
+        });
+        isUnique = !existingTopup;
+      } while (!isUnique);
+
+      // Create wallet topup record for transaction history
+      await WalletTopup.create({
+        userId: userId,
+        walletId: wallet.id,
+        topupCode: topupCode,
+        amount: amount,
+        status: TOPUP_STATUS.COMPLETED,
+        paymentMethod: 'admin',
+        paymentDetails: {
+          adminUsername: admin.username,
+          action: 'admin_deposit'
+        },
+        notes: notes || 'Admin manual deposit',
+        completedAt: new Date()
+      });
+
+      // Log the transaction (optional - you might want to create a transaction log table)
+      const transactionNote = notes ? ` - Note: ${notes}` : '';
+      console.log(`Admin ${admin.username} added ${amount} VND to user ${user.username}'s wallet. New balance: ${newBalance} VND${transactionNote}`);
+
+      return {
+        success: true,
+        message: `Successfully added ${amount.toLocaleString('vi-VN')} VND to user's wallet`,
+        newBalance: newBalance
+      };
+
+    } catch (error) {
+      console.error('Error adding money to wallet:', error);
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to add money to wallet'
+      };
+    }
   }
 }

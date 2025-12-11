@@ -94,21 +94,21 @@ export const createRateLimiter = (options: RateLimitOptions) => {
 
 // Predefined rate limiters
 export const authRateLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per window
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 50, // 50 attempts per window
   message: 'Too many authentication attempts. Please try again later.',
   skipFailedRequests: true, // skip failed requests
 });
 
 export const registerRateLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000, // minutes phút
-  max: 3, // 3 attempts per window
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 50, // 50 attempts per window
   message: MESSAGES.ERROR.RATE_LIMIT_EXCEEDED,
   skipFailedRequests: true, // skip failed requests
 });
 
 export const generalRateLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 5 * 60 * 1000, // 5 minutes
   max: 100, // 100 requests per window
   message: MESSAGES.ERROR.RATE_LIMIT_EXCEEDED,
 });
