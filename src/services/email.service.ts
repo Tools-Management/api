@@ -39,16 +39,16 @@ export class EmailService {
       const mailOptions = {
         from: ENV.EMAIL_USER,
         to: email,
-        subject: 'Xác thực tài khoản - AIRemake.tools',
+        subject: 'Xác thực tài khoản - AIRemake Pro',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background-color: #f8f9fa; padding: 20px; text-align: center;">
-              <h1 style="color: #333; margin: 0;">AIRemake.tools</h1>
+              <h1 style="color: #333; margin: 0;">AIRemake Pro</h1>
             </div>
             <div style="padding: 30px; background-color: #ffffff;">
               <h2 style="color: #333; margin-bottom: 20px;">Xin chào ${username}!</h2>
               <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
-                Cảm ơn bạn đã đăng ký tài khoản tại AIRemake.tools. Để hoàn tất quá trình đăng ký, 
+                Cảm ơn bạn đã đăng ký tài khoản tại AIRemake Pro. Để hoàn tất quá trình đăng ký, 
                 vui lòng sử dụng mã OTP dưới đây:
               </p>
               <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
@@ -63,7 +63,7 @@ export class EmailService {
             </div>
             <div style="background-color: #f8f9fa; padding: 20px; text-align: center;">
               <p style="color: #666; margin: 0; font-size: 14px;">
-                © 2025 AIRemake.tools. All rights reserved.
+                © 2025 AIRemake Pro. All rights reserved.
               </p>
             </div>
           </div>
@@ -92,11 +92,11 @@ export class EmailService {
       const mailOptions = {
         from: ENV.EMAIL_USER,
         to: email,
-        subject: 'Đặt lại mật khẩu - AIRemake.tools',
+        subject: 'Đặt lại mật khẩu - AIRemake Pro',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background-color: #f8f9fa; padding: 20px; text-align: center;">
-              <h1 style="color: #333; margin: 0;">AIRemake.tools</h1>
+              <h1 style="color: #333; margin: 0;">AIRemake Pro</h1>
             </div>
             <div style="padding: 30px; background-color: #ffffff;">
               <h2 style="color: #333; margin-bottom: 20px;">Xin chào ${username}!</h2>
@@ -124,7 +124,7 @@ export class EmailService {
             </div>
             <div style="background-color: #f8f9fa; padding: 20px; text-align: center;">
               <p style="color: #666; margin: 0; font-size: 14px;">
-                © 2025 AIRemake.tools. All rights reserved.
+                © 2025 AIRemake Pro. All rights reserved.
               </p>
             </div>
           </div>

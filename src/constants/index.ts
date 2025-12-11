@@ -156,7 +156,7 @@ export const MESSAGES = {
       USERNAME_LENGTH: 'Username must be between 3 and 50 characters',
       USERNAME_FORMAT: 'Username can only contain alphanumeric characters and underscore',
       FAILED_TO_CHECK_USER_EXISTENCE: 'Failed to check user existence',
-      USER_ALREADY_EXISTS: 'User with this username or email already exists',
+      USER_ALREADY_EXISTS: 'User with this email already exists',
       FAILED_TO_CREATE_USER: 'Failed to create user',
     },
     TICKET: {

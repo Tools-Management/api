@@ -39,7 +39,6 @@ User.init(
     username: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
       validate: {
         notEmpty: true,
         len: [3, 50],
