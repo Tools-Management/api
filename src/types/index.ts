@@ -116,6 +116,11 @@ export enum PAYMENT_STATUS {
   PARTIALLY_REFUNDED = 'partially_refunded',
 }
 
+export enum PAYMENT_METHOD {
+  VN_PAY = 'vn_pay',
+  QR_PAY = 'QR-PAY',
+}
+
 export enum ORDER_TYPE {
   LICENSE_KEY = 'license_key',
   PRODUCT = 'product',
