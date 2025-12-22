@@ -9,7 +9,7 @@ export const generateTopupCode = (): string => {
   const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
   const randomStr = crypto.randomBytes(4).toString("hex").toUpperCase();
 
-  return `TOPUP_${dateStr}_${randomStr}`;
+  return `TOPUP${dateStr}${randomStr}`;
 };
 
 /**

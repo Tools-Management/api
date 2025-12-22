@@ -221,6 +221,9 @@ export const MESSAGES = {
       PAYMENT_CANCELLED: 'Payment cancelled by user',
       PAYMENT_EXPIRED: 'Payment expired',
       GATEWAY_ERROR: 'Payment gateway error',
+    },
+    WEB2M: {
+      TOPUP_CREATION_FAILED: 'Failed to create topup request',
     }
   },
 } as const;

@@ -104,6 +104,7 @@ export const WEB2M_ROUTES = {
   BASE: '/',
   GET_QRCODE: '/get-qrcode',
   QR_PAY: '/qr-pay',
+  CREATE_TOPUP: '/create-topup',
 } as const;
 
 // Full API Paths (for documentation and testing)

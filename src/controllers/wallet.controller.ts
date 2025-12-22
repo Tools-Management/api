@@ -20,7 +20,7 @@ import {
 } from "@/types";
 import { validateTopupAmount } from "@/utils/vnpay.utils";
 import { getVNPayMessage } from "@/constants/vnpay";
-import { ENV } from "@/lib";
+import { ENV, Logger } from "@/lib";
 
 /**
  * GET /api/v1/wallet
@@ -50,7 +50,7 @@ export const getWallet = asyncHandler(
 
       sendSuccessResponse(res, result.data, result.message);
     } catch (error) {
-      console.error("Error in getWallet:", error);
+      Logger.error(`Error in getWallet: ${error}`);
       sendErrorResponse(
         res,
         MESSAGES.ERROR.INTERNAL_ERROR,
@@ -91,7 +91,7 @@ export const getBalance = asyncHandler(
         result.message
       );
     } catch (error) {
-      console.error("Error in getBalance:", error);
+      Logger.error(`Error in getBalance: ${error}`);
       sendErrorResponse(
         res,
         MESSAGES.ERROR.INTERNAL_ERROR,
@@ -154,7 +154,7 @@ export const createTopup = asyncHandler(
         "Topup request created. Redirecting to payment gateway..."
       );
     } catch (error) {
-      console.error("Error in createTopup:", error);
+      Logger.error(`Error in createTopup: ${error}`);
       sendErrorResponse(
         res,
         MESSAGES.ERROR.INTERNAL_ERROR,
@@ -303,7 +303,7 @@ export const getTopupHistory = asyncHandler(
         result.message
       );
     } catch (error) {
-      console.error("Error in getTopupHistory:", error);
+      Logger.error(`Error in getTopupHistory: ${error}`);
       sendErrorResponse(
         res,
         MESSAGES.ERROR.INTERNAL_ERROR,
@@ -345,7 +345,7 @@ export const getTopupDetail = asyncHandler(
         "Topup detail retrieved successfully"
       );
     } catch (error) {
-      console.error("Error in getTopupDetail:", error);
+      Logger.error(`Error in getTopupDetail: ${error}`);
       sendErrorResponse(
         res,
         MESSAGES.ERROR.INTERNAL_ERROR,
