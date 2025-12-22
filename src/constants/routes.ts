@@ -9,6 +9,7 @@ export const ROUTES = {
   API: '/api-management',
   LICENSE_KEYS: '/license-keys',
   WALLET: '/wallet',
+  WEB2M: '/payments',
   // Health Check
   HEALTH: '/health',
 } as const;
@@ -97,6 +98,13 @@ export const WALLET_ROUTES = {
   CANCEL_TOPUP: '/topup-cancel',
   VNPAY_RETURN: '/vnpay/return',
   VNPAY_IPN: '/vnpay/ipn',
+} as const;
+
+export const WEB2M_ROUTES = {
+  BASE: '/',
+  GET_QRCODE: '/get-qrcode',
+  QR_PAY: '/qr-pay',
+  CREATE_TOPUP: '/create-topup',
 } as const;
 
 // Full API Paths (for documentation and testing)

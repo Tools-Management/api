@@ -8,6 +8,7 @@ import ticketRoutes from "./ticket.routes";
 import apiRoutes from "./api.routes";
 import licenseKeyRoutes from "./license-key.routes";
 import walletRoutes from "./wallet.routes";
+import web2mRoutes from "./web2m.routes";
 
 const router = Router();
 
@@ -28,5 +29,6 @@ router.use(ROUTES.TICKETS, ticketRoutes);
 router.use(ROUTES.API, apiRoutes);
 router.use(ROUTES.LICENSE_KEYS, licenseKeyRoutes);
 router.use(ROUTES.WALLET, walletRoutes);
+router.use(ROUTES.WEB2M, web2mRoutes);
 
 export default router;
