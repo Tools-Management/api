@@ -170,7 +170,6 @@ export const login = asyncHandler(
         MESSAGES.ERROR.AUTH.REQUIRED_EMAIL_PASSWORD
       );
     }
-    console.log("email", email);
     try {
       const result = await UserService.authenticateUser(email, password);
 

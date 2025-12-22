@@ -8,6 +8,7 @@ import { JWTUtils } from "@/utils/jwtUtils";
 
 import { Op } from "sequelize";
 import { AuthApiService } from "./auth.api.service";
+import { Logger } from "@/lib";
 
 export class UserService {
   /**
@@ -17,11 +18,13 @@ export class UserService {
     return await User.findAll({
       where: { isActive: true },
       attributes: { exclude: ["password", "otp", "otpExpiresAt"] },
-      include: [{
-        model: UserWallet,
-        as: 'wallet',
-        attributes: ['balance', 'currency', 'isActive'],
-      }],
+      include: [
+        {
+          model: UserWallet,
+          as: "wallet",
+          attributes: ["balance", "currency", "isActive"],
+        },
+      ],
       order: [["createdAt", "DESC"]],
     });
   }
@@ -95,9 +98,7 @@ export class UserService {
     image?: string;
   }): Promise<{ user: IUser; otp: string }> {
     // Check if user already exists using optimized utility
-    const existenceCheck = await this.checkUserExists(
-      userData.email
-    );
+    const existenceCheck = await this.checkUserExists(userData.email);
     if (existenceCheck.exists) {
       throw new Error("User with this email already exists");
     }
@@ -165,6 +166,16 @@ export class UserService {
     await user.update({
       isActive: true,
     });
+
+    const wallet = await UserWallet.findOne({
+      where: { userId: user.id },
+    });
+
+    if (wallet) {
+      await wallet.update({
+        isActive: true,
+      });
+    }
 
     // Clear OTP fields separately
     user.otp = null;
@@ -508,7 +519,7 @@ export class UserService {
 
       // Find user's wallet
       const wallet = await UserWallet.findOne({
-        where: { userId, isActive: true }
+        where: { userId, isActive: true },
       });
 
       if (!wallet) {
@@ -527,7 +538,7 @@ export class UserService {
       // Update wallet balance and last transaction time
       await wallet.update({
         balance: newBalance,
-        lastTransactionAt: new Date()
+        lastTransactionAt: new Date(),
       });
 
       // Generate unique topup code for admin deposit
@@ -542,7 +553,7 @@ export class UserService {
       do {
         topupCode = generateTopupCode();
         const existingTopup = await WalletTopup.findOne({
-          where: { topupCode }
+          where: { topupCode },
         });
         isUnique = !existingTopup;
       } while (!isUnique);
@@ -554,30 +565,36 @@ export class UserService {
         topupCode: topupCode,
         amount: amount,
         status: TOPUP_STATUS.COMPLETED,
-        paymentMethod: 'admin',
+        paymentMethod: "admin",
         paymentDetails: {
           adminUsername: admin.username,
-          action: 'admin_deposit'
+          action: "admin_deposit",
         },
-        notes: notes || 'Admin manual deposit',
-        completedAt: new Date()
+        notes: notes || "Admin manual deposit",
+        completedAt: new Date(),
       });
 
       // Log the transaction (optional - you might want to create a transaction log table)
-      const transactionNote = notes ? ` - Note: ${notes}` : '';
-      console.log(`Admin ${admin.username} added ${amount} VND to user ${user.username}'s wallet. New balance: ${newBalance} VND${transactionNote}`);
+      const transactionNote = notes ? ` - Note: ${notes}` : "";
+      Logger.info(
+        `Admin ${admin.username} added ${amount} VND to user ${user.username}'s wallet. New balance: ${newBalance} VND${transactionNote}`
+      );
 
       return {
         success: true,
-        message: `Successfully added ${amount.toLocaleString('vi-VN')} VND to user's wallet`,
-        newBalance: newBalance
+        message: `Successfully added ${amount.toLocaleString(
+          "vi-VN"
+        )} VND to user's wallet`,
+        newBalance: newBalance,
       };
-
     } catch (error) {
-      console.error('Error adding money to wallet:', error);
+      Logger.error(`Error Admin adding money to wallet: ${error}`);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to add money to wallet'
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to add money to wallet",
       };
     }
   }

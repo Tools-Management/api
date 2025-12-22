@@ -7,7 +7,7 @@ import {
 import { MESSAGES, HTTP_STATUS } from "@/constants";
 import { AuthApiService, LicenseKeyService } from "@/services";
 import { User } from "@/models";
-import { ENV } from "@/lib";
+import { ENV, Logger } from "@/lib";
 
 // ====================== CORE LOGIC ======================
 const performLogin = async (): Promise<string | null> => {
@@ -23,7 +23,7 @@ const performLogin = async (): Promise<string | null> => {
 
     return data.data.token;
   } catch (error) {
-    console.error("Login failed:", error);
+    Logger.error(`Login failed: ${error}`);
     return null;
   }
 };
@@ -33,7 +33,7 @@ const fetchTokenFromDB = async (): Promise<string | null> => {
     const user = await User.findOne({ where: { email: ENV.EMAIL_API_URL } });
     return user?.tokenApi ?? null;
   } catch (error) {
-    console.error("Fetch token failed:", error);
+    Logger.error(`Fetch token failed: ${error}`);
     return null;
   }
 };
