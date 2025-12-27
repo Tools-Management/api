@@ -5,7 +5,6 @@ import {
   IWeb2MTransaction,
   IWeb2MTransactionApiResponse,
   TypeTransaction,
-  Web2MErrorCode,
 } from "@/types/web2m.type";
 import WalletService from "./wallet.service";
 import { PAYMENT_METHOD, TOPUP_STATUS } from "@/types";
@@ -16,24 +15,24 @@ import { Logger } from "@/lib";
 const TOPUP_REGEX = /TOPUP(\d{8})([A-Za-z0-9]{8,})/i;
 export class Web2MService {
   private static async getTranssactionHistory(): Promise<IWeb2MTransaction[]> {
-    const { apiGetTransactionUrl, bankNumber, bankToken, bankPassword } =
+    const { apiGetTransactionUrlV2, bankToken } =
       CONFIG;
 
-    const transactionUrl = `${apiGetTransactionUrl}/${bankPassword}/${bankNumber}/${bankToken}`;
+    const transactionUrl = `${apiGetTransactionUrlV2}/${bankToken}`;
 
     const { data } = await axios.get<IWeb2MTransactionApiResponse>(
       transactionUrl
     );
 
     // 1) Token invalid
-    if (data.status === Web2MErrorCode.INVALID_TOKEN) {
-      throw new Error(
-        "Không get được lịch sử giao dịch. Vui lòng kiểm tra lại cấu hình web."
-      );
-    }
+    // if (data.status === Web2MErrorCode.INVALID_TOKEN) {
+    //   throw new Error(
+    //     "Không get được lịch sử giao dịch. Vui lòng kiểm tra lại cấu hình web."
+    //   );
+    // }
 
     // 2) Other failures (status === false OR undefined OR unexpected number)
-    if (data.status !== true) {
+    if (data.success !== true) {
       // nếu muốn, có thể ưu tiên message từ API
       const msg =
         data.message || "Không get được lịch sử giao dịch từ hệ thống";
@@ -133,7 +132,7 @@ export class Web2MService {
     for (const tx of transactions) {
       if (!tx.description) continue;
 
-      const txDate = this.parseTransactionDate(tx.transactionDate);
+      const txDate = this.parseTransactionDate(tx.postingDate);
       if (!txDate) continue;
 
       const txTopupCode = this.extractTopupCode(tx.description);
