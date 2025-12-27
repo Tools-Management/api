@@ -1,15 +1,15 @@
-import { MESSAGES, PRICE_CONSTANTS } from '@/constants';
-import { WalletService } from '@/services/wallet.service';
-import { LicenseKey, User, UserWallet } from '@/models';
+import { MESSAGES, PRICE_CONSTANTS } from "@/constants";
+import { WalletService } from "@/services/wallet.service";
+import { LicenseKey, User, UserWallet } from "@/models";
 import {
   ApiResponse,
   ILicenseKey,
   ILicenseKeyQuery,
   IPurchaseLicenseRequest,
   IPurchaseLicenseResponse,
-} from '@/types';
-import { IGenerateLicenseKeysRequest } from '@/types/api.type';
-import { AuthApiService } from './auth.api.service';
+} from "@/types";
+import { IGenerateLicenseKeysRequest } from "@/types/api.type";
+import { AuthApiService } from "./auth.api.service";
 
 export class LicenseKeyService {
   /**
@@ -23,12 +23,15 @@ export class LicenseKeyService {
     try {
       // Gọi External API để generate keys
       // Response trực tiếp là mảng string keys: ['KEY1-XXX-V3', 'KEY2-YYY-V3', ...]
-      const generatedKeys = await AuthApiService.generateLicenseKeys(token, data);
+      const generatedKeys = await AuthApiService.generateLicenseKeys(
+        token,
+        data
+      );
 
       if (!Array.isArray(generatedKeys) || generatedKeys.length === 0) {
         return {
           success: false,
-          message: 'No keys generated from external API',
+          message: "No keys generated from external API",
         };
       }
 
@@ -40,7 +43,7 @@ export class LicenseKeyService {
           // Check xem key đã tồn tại chưa (dùng index key)
           const existingKey = await LicenseKey.findOne({
             where: { key: keyString },
-            attributes: ['id'],
+            attributes: ["id"],
           });
 
           if (!existingKey) {
@@ -61,18 +64,18 @@ export class LicenseKeyService {
 
       return {
         success: true,
-        message: 'License keys generated and saved successfully',
+        message: "License keys generated and saved successfully",
         data: {
           generated: savedKeys.length,
           keys: savedKeys,
         },
       };
     } catch (error) {
-      console.error('Generate and save license keys error:', error);
+      console.error("Generate and save license keys error:", error);
       return {
         success: false,
-        message: 'Failed to generate and save license keys',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        message: "Failed to generate and save license keys",
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -81,7 +84,10 @@ export class LicenseKeyService {
    * Xóa license key
    * Xóa trong DB trước, sau đó gọi External API để xóa
    */
-  static async deleteLicenseKey(token: string, id: number): Promise<ApiResponse<void>> {
+  static async deleteLicenseKey(
+    token: string,
+    id: number
+  ): Promise<ApiResponse<void>> {
     try {
       // 1. Tìm key trong DB để lấy externalId
       const licenseKey = await LicenseKey.findByPk(id);
@@ -89,7 +95,7 @@ export class LicenseKeyService {
       if (!licenseKey) {
         return {
           success: false,
-          message: 'License key not found in database',
+          message: "License key not found in database",
         };
       }
 
@@ -104,21 +110,21 @@ export class LicenseKeyService {
         try {
           await AuthApiService.deleteLicenseKey(token, externalId);
         } catch (error) {
-          console.error('Failed to delete from external API:', error);
+          console.error("Failed to delete from external API:", error);
           // Không throw error vì đã xóa trong DB rồi
         }
       }
 
       return {
         success: true,
-        message: 'License key deleted successfully',
+        message: "License key deleted successfully",
       };
     } catch (error) {
-      console.error('Delete license key error:', error);
+      console.error("Delete license key error:", error);
       return {
         success: false,
-        message: 'Failed to delete license key',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        message: "Failed to delete license key",
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -128,52 +134,86 @@ export class LicenseKeyService {
    * Lấy tất cả keys và lưu vào database
    * Nếu key đã tồn tại (từ generate) thì update externalId cho đúng
    */
-  static async syncLicenseKeys(token: string): Promise<ApiResponse<{ synced: number; skipped: number; updated: number }>> {
+  static async syncLicenseKeys(
+    token: string
+  ): Promise<
+    ApiResponse<{ synced: number; skipped: number; updated: number }>
+  > {
     try {
-      // Lấy tất cả license keys từ External API
+      // 1 Lấy tất cả license keys từ External API
       const response = await AuthApiService.getLicenseKeys(token);
 
       if (!response.success || !response.data) {
         return {
           success: false,
-          message: 'Failed to fetch license keys from external API',
-          error: response.error || 'Unknown error',
+          message: "Failed to fetch license keys from external API",
+          error: response.error || "Unknown error",
         };
       }
+
+      const externalKeys = response.data;
 
       let syncedCount = 0;
       let skippedCount = 0;
       let updatedCount = 0;
 
-      // Lặp qua tất cả keys và lưu vào database
-      for (const externalKey of response.data) {
-        try {
-          // 1. Check xem key string đã tồn tại chưa (dùng index key)
-          const existingKeyByString = await LicenseKey.findOne({
-            where: { key: externalKey.key },
-            attributes: ['id', 'externalId', 'key'],
-          });
+      // 2 Chuẩn bị danh sách key string từ API
+      const keyStrings = externalKeys.map((k) => k.key);
 
-          if (existingKeyByString) {
-            // Nếu tồn tại key và externalId = key (nghĩa là được tạo từ generate)
-            // → Update externalId thành _id thật từ MongoDB
-            if (existingKeyByString.externalId === existingKeyByString.key) {
-              await existingKeyByString.update({
-                externalId: externalKey._id, // Update thành _id thật
-              });
+      // 3 Query DB 1 lần duy nhất
+      const existingKeys = await LicenseKey.findAll({
+        where: { key: keyStrings },
+        attributes: ["id", "externalId", "key", "isActive", "isUsed"],
+      });
+
+      // 4 Map key → record DB
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const keyMap = new Map<string, any>();
+      for (const key of existingKeys) {
+        keyMap.set(key.key, key);
+      }
+
+      // 5 Sync từng key (KHÔNG query DB nữa)
+      for (const externalKey of externalKeys) {
+        try {
+          const existingKey = keyMap.get(externalKey.key);
+
+          if (existingKey) {
+            const updatePayload: {
+              externalId?: string;
+              isActive?: boolean;
+              isUsed?: boolean;
+            } = {};
+
+            // A️⃣ Update externalId nếu là key generate
+            if (existingKey.externalId === existingKey.key) {
+              updatePayload.externalId = externalKey._id;
+            }
+
+            // B️⃣ Sync isActive
+            if (existingKey.isActive !== externalKey.isActive) {
+              updatePayload.isActive = externalKey.isActive;
+            }
+
+            // C️⃣ Sync isUsed
+            if (existingKey.isUsed !== externalKey.isActive) {
+              updatePayload.isUsed = externalKey.isActive;
+            }
+
+            if (Object.keys(updatePayload).length > 0) {
+              await existingKey.update(updatePayload);
               updatedCount++;
             } else {
-              // Đã có _id thật rồi, skip
               skippedCount++;
             }
           } else {
-            // 2. Nếu chưa tồn tại key, tạo mới
+            // D️⃣ Key chưa tồn tại → create
             await LicenseKey.create({
               externalId: externalKey._id,
               key: externalKey.key,
               isActive: externalKey.isActive,
               duration: externalKey.duration,
-              isUsed: false,
+              isUsed: externalKey.isActive,
             });
             syncedCount++;
           }
@@ -185,7 +225,7 @@ export class LicenseKeyService {
 
       return {
         success: true,
-        message: 'License keys synced successfully',
+        message: "License keys synced successfully",
         data: {
           synced: syncedCount,
           skipped: skippedCount,
@@ -193,11 +233,11 @@ export class LicenseKeyService {
         },
       };
     } catch (error) {
-      console.error('Sync license keys error:', error);
+      console.error("Sync license keys error:", error);
       return {
         success: false,
-        message: 'Failed to sync license keys',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        message: "Failed to sync license keys",
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -237,9 +277,9 @@ export class LicenseKeyService {
         where: {
           duration: duration,
           isUsed: false,
-          isActive: true,
+          isActive: false,
         },
-        order: [['createdAt', 'ASC']], // Lấy key cũ nhất trước
+        order: [["createdAt", "ASC"]], // Lấy key cũ nhất trước
       });
 
       if (!availableKey) {
@@ -270,13 +310,14 @@ export class LicenseKeyService {
       const purchasedAt = new Date();
       await availableKey.update({
         isUsed: true,
+        isActive: true,
         purchasedBy: userId,
         purchasedAt: purchasedAt,
       });
 
       return {
         success: true,
-        message: 'License key purchased successfully',
+        message: "License key purchased successfully",
         data: {
           key: availableKey.key,
           duration: availableKey.duration,
@@ -285,10 +326,10 @@ export class LicenseKeyService {
         },
       };
     } catch (error) {
-      console.error('Purchase license key error:', error);
+      console.error("Purchase license key error:", error);
       return {
         success: false,
-        message: 'Failed to purchase license key',
+        message: "Failed to purchase license key",
       };
     }
   }
@@ -297,7 +338,11 @@ export class LicenseKeyService {
    * Lấy danh sách license keys (chỉ dành cho admin)
    * Có filter theo duration, isUsed, isActive
    */
-  static async getAllLicenseKeys({ query }: { query: ILicenseKeyQuery }): Promise<ApiResponse<ILicenseKey[]>> {
+  static async getAllLicenseKeys({
+    query,
+  }: {
+    query: ILicenseKeyQuery;
+  }): Promise<ApiResponse<ILicenseKey[]>> {
     try {
       const { page, limit, duration, isUsed, isActive } = query;
 
@@ -313,24 +358,25 @@ export class LicenseKeyService {
 
       if (isUsed !== undefined) {
         // Convert string to boolean if needed
-        where.isUsed = typeof isUsed === 'string' ? isUsed === 'true' : isUsed;
+        where.isUsed = typeof isUsed === "string" ? isUsed === "true" : isUsed;
       }
 
       if (isActive !== undefined) {
         // Convert string to boolean if needed
-        where.isActive = typeof isActive === 'string' ? isActive === 'true' : isActive;
+        where.isActive =
+          typeof isActive === "string" ? isActive === "true" : isActive;
       }
 
       const licenseKeys = await LicenseKey.findAll({
         where,
         offset: (pageNum - 1) * limitNum,
         limit: limitNum,
-        order: [['createdAt', 'DESC']],
+        order: [["createdAt", "DESC"]],
         include: [
           {
             model: User,
-            as: 'purchaser',
-            attributes: ['id', 'username', 'email'],
+            as: "purchaser",
+            attributes: ["id", "username", "email"],
           },
         ],
       });
@@ -349,11 +395,11 @@ export class LicenseKeyService {
         },
       };
     } catch (error) {
-      console.error('Get all license keys error:', error);
+      console.error("Get all license keys error:", error);
       return {
         success: false,
         message: MESSAGES.ERROR.INTERNAL_ERROR,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -361,14 +407,16 @@ export class LicenseKeyService {
   /**
    * Lấy danh sách license keys đã mua của user
    */
-  static async getMyLicenseKeys(userId: number): Promise<ApiResponse<ILicenseKey[]>> {
+  static async getMyLicenseKeys(
+    userId: number
+  ): Promise<ApiResponse<ILicenseKey[]>> {
     try {
       const licenseKeys = await LicenseKey.findAll({
         where: {
           purchasedBy: userId,
           isUsed: true,
         },
-        order: [['purchasedAt', 'DESC']],
+        order: [["purchasedAt", "DESC"]],
       });
 
       return {
@@ -377,11 +425,11 @@ export class LicenseKeyService {
         data: licenseKeys.map((key) => key.toJSON()),
       };
     } catch (error) {
-      console.error('Get my license keys error:', error);
+      console.error("Get my license keys error:", error);
       return {
         success: false,
         message: MESSAGES.ERROR.INTERNAL_ERROR,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -394,27 +442,36 @@ export class LicenseKeyService {
       total: number;
       used: number;
       available: number;
-      byDuration: { duration: string; total: number; used: number; available: number }[];
+      byDuration: {
+        duration: string;
+        total: number;
+        used: number;
+        available: number;
+      }[];
     }>
   > {
     try {
       const total = await LicenseKey.count();
       const used = await LicenseKey.count({ where: { isUsed: true } });
-      const available = await LicenseKey.count({ where: { isUsed: false, isActive: true } });
+      const available = await LicenseKey.count({
+        where: { isUsed: false, isActive: false },
+      });
 
       // Lấy thống kê theo duration
       const durations = await LicenseKey.findAll({
-        attributes: ['duration'],
-        group: ['duration'],
+        attributes: ["duration"],
+        group: ["duration"],
       });
 
       const byDuration = await Promise.all(
         durations.map(async (item) => {
           const duration = item.duration;
           const total = await LicenseKey.count({ where: { duration } });
-          const used = await LicenseKey.count({ where: { duration, isUsed: true } });
+          const used = await LicenseKey.count({
+            where: { duration, isUsed: true },
+          });
           const available = await LicenseKey.count({
-            where: { duration, isUsed: false, isActive: true },
+            where: { duration, isUsed: false, isActive: false },
           });
 
           return {
@@ -437,13 +494,12 @@ export class LicenseKeyService {
         },
       };
     } catch (error) {
-      console.error('Get license key stats error:', error);
+      console.error("Get license key stats error:", error);
       return {
         success: false,
         message: MESSAGES.ERROR.INTERNAL_ERROR,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
 }
-

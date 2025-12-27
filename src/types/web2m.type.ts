@@ -21,11 +21,13 @@ export interface IWeb2MTransaction {
   amount: string;
   description: string;
   transactionDate: string;
+  postingDate: string;
   type: TypeTransaction;
 }
 
 export interface IWeb2MTransactionApiResponse {
   status?: boolean | number;
+  success?: boolean;
   message?: string;
   transactions?: IWeb2MTransaction[];
 }
