@@ -66,4 +66,5 @@ export const ENV = {
 
   API_GET_QR: process.env["API_GET_QR"],
   API_GET_TRANSACTION: process.env["API_GET_TRANSACTION"],
+  API_GET_TRANSACTION_V2: process.env["API_GET_TRANSACTION_V2"],
 };

@@ -9,6 +9,7 @@ import { JWTUtils } from "@/utils/jwtUtils";
 import { Op } from "sequelize";
 import { AuthApiService } from "./auth.api.service";
 import { Logger } from "@/lib";
+import WalletService from "./wallet.service";
 
 export class UserService {
   /**
@@ -167,15 +168,16 @@ export class UserService {
       isActive: true,
     });
 
-    const wallet = await UserWallet.findOne({
-      where: { userId: user.id },
-    });
+    // const wallet = await UserWallet.findOne({
+    //   where: { userId: user.id },
+    // });
 
-    if (wallet) {
-      await wallet.update({
-        isActive: true,
-      });
-    }
+    // if (wallet) {
+    //   await wallet.update({
+    //     isActive: true,
+    //   });
+    // }
+    await WalletService.getOrCreateWallet(user.id);
 
     // Clear OTP fields separately
     user.otp = null;

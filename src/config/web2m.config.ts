@@ -3,6 +3,7 @@ import { ENV } from "@/lib/env";
 const WEB2M_CONFIG = {
   apiGetQrUrl: ENV.API_GET_QR,
   apiGetTransactionUrl: ENV.API_GET_TRANSACTION,
+  apiGetTransactionUrlV2: ENV.API_GET_TRANSACTION_V2,
   bankToken: ENV.BANK_TOKEN,
   bankPassword: ENV.BANK_PASSWORD,
   bankName: ENV.BANK_NAME,
