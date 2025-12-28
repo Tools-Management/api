@@ -82,9 +82,12 @@ export interface ILinks {
 export enum LINK_TYPES {
   DOWNLOAD = 'download',
   INTRO_VIDEO = 'intro_video',
+  INTERSTITIAL_IMAGE = 'interstitial_image',
+  INTERSTITIAL_VIDEO = 'interstitial_video',
+  DESTINATION_URL = 'destination_url'
 }
 
-export enum TICKET_STATUS {
+export enum TICKET_STATUS { 
   PENDING = 'pending',
   PROCESSING = 'processing',
   RESOLVED = 'resolved',
