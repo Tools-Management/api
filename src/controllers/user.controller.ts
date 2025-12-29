@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { UserService } from '@/services/user.service';
 
-import { sendSuccessResponse, sendErrorResponse, sendValidationErrorResponse, sendNotFoundResponse } from '@/utils/responseFormatter';
+import { sendSuccessResponse, sendErrorResponse, sendValidationErrorResponse, sendNotFoundResponse, sendUnauthorizedResponse } from '@/utils/responseFormatter';
 import { 
   validateId,
   validateStringField,
@@ -237,6 +237,23 @@ export const getUsersByRole = asyncHandler(async (req: Request, res: Response): 
   
   const users = await UserService.getUsersByRole(roleValidation.value!);
   sendSuccessResponse(res, users, MESSAGES.SUCCESS.FETCHED);
+});
+
+export const updateRoleUser = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const idAdmin = req.user?.userId;
+
+  if(!idAdmin) {
+    return sendUnauthorizedResponse(res,
+      MESSAGES.ERROR.UNAUTHORIZED)
+  }
+
+  const { userId, role } = req.body;
+  const success = await UserService.updateRoleUser(userId, role);
+  if (!success) {
+    return sendNotFoundResponse(res, MESSAGES.ERROR.USER.USER_NOT_FOUND);
+  }
+  
+  sendSuccessResponse(res, null, MESSAGES.SUCCESS.UPDATED);
 });
 
 export const searchUsers = asyncHandler(async (req: Request, res: Response): Promise<void> => {
