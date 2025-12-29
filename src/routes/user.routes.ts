@@ -12,6 +12,7 @@ import {
   getUsersByRole,
   searchUsers,
   addMoneyToWallet,
+  updateRoleUser,
 } from '@/controllers/user.controller';
 import { validate } from '@/middlewares/validator';
 import { USER_ROUTES } from '@/constants';
@@ -152,6 +153,15 @@ router.put(
   authenticateToken,
   validate(validateChangePassword),
   changePassword
+);
+
+// PUT /api/v1/users/update-role - Change role for user - ONLY SUPER ADMIN
+router.put(
+  USER_ROUTES.UPDATE_ROLE_BY_ADMIN,
+  strictRateLimiter,
+  authenticateToken,
+  requireSuperAdmin,
+  updateRoleUser
 );
 
 // DELETE /api/v1/users/:id - Delete user

@@ -5,10 +5,9 @@ import { USER_ROLES, OTP_CONSTANTS } from "@/constants";
 import { EmailService } from "./email.service";
 import { UserValidationUtils } from "@/utils/userValidation";
 import { JWTUtils } from "@/utils/jwtUtils";
-
 import { Op } from "sequelize";
 import { AuthApiService } from "./auth.api.service";
-import { Logger } from "@/lib";
+import { ENV, Logger } from "@/lib";
 import WalletService from "./wallet.service";
 
 export class UserService {
@@ -251,6 +250,26 @@ export class UserService {
       attributes: { exclude: ["password", "otp", "otpExpiresAt"] },
       order: [["createdAt", "DESC"]],
     });
+  }
+
+  /**
+   * Update role for user by ADMIN - ONLY SUPER ADMIN
+   */
+  static async updateRoleUser(userId: number, role: string): Promise<boolean> {
+    
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new Error("Notfound User");
+    }
+
+    if (user.email === ENV.EMAIL_API_URL) {
+      throw new Error("Can't update role of SUPER_ADMIN");
+    }
+
+    user.role = role;
+    await user.save();
+    return true;
   }
 
   /**
