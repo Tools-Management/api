@@ -36,6 +36,7 @@ export const USER_ROUTES = {
   GET_PROFILE: '/profile',
   UPDATE_PROFILE: '/profile',
   UPDATE_AVATAR: '/profile/avatar',
+  UPDATE_ROLE_BY_ADMIN: '/update-role',
   CHANGE_PASSWORD: '/change-password',
   DELETE: '/:id',
   SOFT_DELETE: '/:id/soft-delete',
