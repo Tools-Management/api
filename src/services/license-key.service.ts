@@ -1,15 +1,18 @@
 import { MESSAGES, PRICE_CONSTANTS } from "@/constants";
 import { WalletService } from "@/services/wallet.service";
-import { LicenseKey, User, UserWallet } from "@/models";
+import { LicenseKey, User, UserWallet, WalletTopup } from "@/models";
 import {
   ApiResponse,
   ILicenseKey,
   ILicenseKeyQuery,
   IPurchaseLicenseRequest,
   IPurchaseLicenseResponse,
+  PAYMENT_METHOD,
+  TOPUP_STATUS,
 } from "@/types";
 import { IGenerateLicenseKeysRequest } from "@/types/api.type";
 import { AuthApiService } from "./auth.api.service";
+import { Op } from "sequelize";
 
 export class LicenseKeyService {
   /**
@@ -306,6 +309,20 @@ export class LicenseKeyService {
         lastTransactionAt: new Date(),
       });
 
+      const topupCode = `KEY-${availableKey.key}-${price}`;
+
+      const requestData = {
+        userId,
+        walletId: wallet.id,
+        topupCode,
+        amount: price,
+        status: TOPUP_STATUS.COMPLETED,
+        paymentMethod: PAYMENT_METHOD.PAYMENT,
+        notes: "Mua license key",
+      };
+
+      await WalletTopup.create(requestData);
+
       // Đánh dấu key là đã sử dụng
       const purchasedAt = new Date();
       await availableKey.update({
@@ -344,7 +361,7 @@ export class LicenseKeyService {
     query: ILicenseKeyQuery;
   }): Promise<ApiResponse<ILicenseKey[]>> {
     try {
-      const { page, limit, duration, isUsed, isActive } = query;
+      const { page, limit, duration, isUsed, isActive, key } = query;
 
       const pageNum = Number(page) || 1;
       const limitNum = Number(limit) || 10;
@@ -365,6 +382,13 @@ export class LicenseKeyService {
         // Convert string to boolean if needed
         where.isActive =
           typeof isActive === "string" ? isActive === "true" : isActive;
+      }
+
+      // SEARCH THEO LICENSE KEY
+      if (key) {
+        where.key = {
+          [Op.like]: `%${key}%`,
+        };
       }
 
       const licenseKeys = await LicenseKey.findAll({

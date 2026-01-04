@@ -11,9 +11,10 @@ import {
   vnpayReturn,
   vnpayIPN,
   getTopupHistory,
-  getTopupDetail
+  getTopupDetail,
+  getAllTopupHistoryByAdmin
 } from '@/controllers/wallet.controller';
-import { authenticateToken } from '@/middlewares/auth';
+import { authenticateToken, requireSuperAdmin } from '@/middlewares/auth';
 import { generalRateLimiter } from '@/middlewares/rateLimiter';
 import { securityHeaders, sqlInjectionProtection, xssProtection } from '@/middlewares/security';
 import { requestLogger } from '@/middlewares/logger';
@@ -76,6 +77,21 @@ router.get(
   authenticateToken,
   getTopupHistory
 );
+
+/**
+ * GET /api/v1/wallet/admin/topups
+ * Lấy lịch sử giao dịch only admin
+ * Require: Authentication
+ * Query: page, limit, status, paymentMethod, userId, startDate, endDate
+ */
+router.get(
+  WALLET_ROUTES.ADMIN_TOPUPS,
+  // generalRateLimiter,
+  authenticateToken,
+  requireSuperAdmin,
+  getAllTopupHistoryByAdmin
+);
+
 
 /**
  * GET /api/v1/wallet/topups/:topupCode
