@@ -3,9 +3,9 @@
  * Handle wallet operations, topups, và balance management
  */
 
-import { Transaction } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import sequelize from '@/config/database';
-import { UserWallet, WalletTopup } from '@/models';
+import { User, UserWallet, WalletTopup } from '@/models';
 import {
   IUserWallet,
   ICreateTopupRequest,
@@ -366,6 +366,94 @@ export class WalletService {
       };
     }
   }
+
+  /**
+   * Lấy lịch sử giao dịch only admin
+   */
+  static async getAllTopupHistoryByAdmin(
+    query: ITopupQuery = {}
+  ): Promise<{ 
+    success: boolean; 
+    message: string; 
+    data?: unknown[]; 
+    pagination?: { page: number; limit: number; total: number; totalPages: number };
+    error?: unknown;
+  }> {
+    try {
+      const page = Number(query.page) || 1;
+      const limit = Number(query.limit) || 20;
+      const offset = (page - 1) * limit;
+      
+      const where: { 
+        userId?: number; 
+        status?: string; 
+        paymentMethod?: string;
+        createdAt?: {
+          [Op.gte]?: Date;
+          [Op.lte]?: Date;
+        };
+        
+      } = { };
+      
+      if (query.status) {
+        where.status = query.status;
+      }
+      
+      if (query.paymentMethod) {
+        where.paymentMethod = query.paymentMethod;
+      }
+
+      if (query.userId) {
+        where.userId = Number(query.userId);
+      }
+
+      if (query.startDate || query.endDate) {
+        where.createdAt = {};
+  
+        if (query.startDate) {
+          where.createdAt[Op.gte] = new Date(query.startDate);
+        }
+  
+        if (query.endDate) {
+          where.createdAt[Op.lte] = new Date(query.endDate);
+        }
+      }
+      
+      const { count, rows } = await WalletTopup.findAndCountAll({
+        where,
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'email', 'username'],
+          },
+        ],
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+      });
+      
+      return {
+        success: true,
+        message: MESSAGES.SUCCESS.WALLET.TOPUP_HISTORY_RETRIEVED_SUCCESS,
+        data: rows.map(r => r.toJSON()),
+        pagination: {
+          page,
+          limit,
+          total: count,
+          totalPages: Math.ceil(count / limit),
+        },
+      };
+    } catch (error) {
+      console.error('Error getting topup history:', error);
+      return {
+        success: false,
+        message: MESSAGES.ERROR.INTERNAL_ERROR,
+        error,
+      };
+    }
+  }
+
 
   /**
    * Get wallet balance
