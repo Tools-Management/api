@@ -94,6 +94,7 @@ export const WALLET_ROUTES = {
   GET_BALANCE: '/balance',
   CREATE_TOPUP: '/topup',
   TOPUPS: '/topups',
+  ADMIN_TOPUPS: '/admin/topups',
   TOPUP_DETAIL: '/topups/:topupCode',
   GET_TOPUP_HISTORY: '/topup-history',
   CANCEL_TOPUP: '/topup-cancel',

@@ -314,6 +314,43 @@ export const getTopupHistory = asyncHandler(
 );
 
 /**
+ * GET /api/v1/wallet/admin/topups
+ * Lấy lịch sử giao dịch only admin
+ */
+export const getAllTopupHistoryByAdmin = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const query = req.query as unknown as ITopupQuery;
+      const result = await WalletService.getAllTopupHistoryByAdmin(query);
+
+      if (!result.success) {
+        return sendErrorResponse(
+          res,
+          result.message,
+          HTTP_STATUS.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      sendSuccessResponse(
+        res,
+        {
+          topups: result.data,
+          pagination: result.pagination,
+        },
+        result.message
+      );
+    } catch (error) {
+      Logger.error(`Error in getTopupHistory: ${error}`);
+      sendErrorResponse(
+        res,
+        MESSAGES.ERROR.INTERNAL_ERROR,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+);
+
+/**
  * GET /api/v1/wallet/topups/:topupCode
  * Lấy chi tiết một giao dịch nạp tiền
  */

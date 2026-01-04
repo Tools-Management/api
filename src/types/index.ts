@@ -122,6 +122,7 @@ export enum PAYMENT_STATUS {
 export enum PAYMENT_METHOD {
   VN_PAY = 'vn_pay',
   QR_PAY = 'QR-PAY',
+  PAYMENT = 'PAYMENT',
 }
 
 export enum ORDER_TYPE {
@@ -397,6 +398,7 @@ export interface ILicenseKeyQuery {
   duration?: string;
   isUsed?: boolean;
   isActive?: boolean;
+  key?: string;
 }
 
 // Export Wallet, Topup, and Order types
