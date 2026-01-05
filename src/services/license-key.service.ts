@@ -1,4 +1,4 @@
-import { MESSAGES, PRICE_CONSTANTS } from "@/constants";
+import { MESSAGES, PLUS_COUNT_KEYS, PRICE_CONSTANTS } from "@/constants";
 import { WalletService } from "@/services/wallet.service";
 import { LicenseKey, User, UserWallet, WalletTopup } from "@/models";
 import {
@@ -13,6 +13,7 @@ import {
 import { IGenerateLicenseKeysRequest } from "@/types/api.type";
 import { AuthApiService } from "./auth.api.service";
 import { Op } from "sequelize";
+import { ensureValidToken } from "@/controllers/api.controller";
 
 export class LicenseKeyService {
   /**
@@ -38,39 +39,14 @@ export class LicenseKeyService {
         };
       }
 
-      const savedKeys: string[] = [];
-
-      // Lưu từng key vào database
-      for (const keyString of generatedKeys) {
-        try {
-          // Check xem key đã tồn tại chưa (dùng index key)
-          const existingKey = await LicenseKey.findOne({
-            where: { key: keyString },
-            attributes: ["id"],
-          });
-
-          if (!existingKey) {
-            // Tạo mới key trong database
-            await LicenseKey.create({
-              externalId: keyString, // Dùng key string làm externalId
-              key: keyString,
-              isActive: true,
-              duration: data.duration,
-              isUsed: false,
-            });
-            savedKeys.push(keyString);
-          }
-        } catch (error) {
-          console.error(`Failed to save key ${keyString}:`, error);
-        }
-      }
+      await LicenseKeyService.syncLicenseKeys(token);
 
       return {
         success: true,
         message: "License keys generated and saved successfully",
         data: {
-          generated: savedKeys.length,
-          keys: savedKeys,
+          generated: data.quantity,
+          keys: generatedKeys,
         },
       };
     } catch (error) {
@@ -166,7 +142,14 @@ export class LicenseKeyService {
       // 3 Query DB 1 lần duy nhất
       const existingKeys = await LicenseKey.findAll({
         where: { key: keyStrings },
-        attributes: ["id", "externalId", "key", "isActive", "isUsed"],
+        attributes: [
+          "id",
+          "externalId",
+          "key",
+          "isActive",
+          "isUsed",
+          "purchasedBy",
+        ],
       });
 
       // 4 Map key → record DB
@@ -199,8 +182,19 @@ export class LicenseKeyService {
             }
 
             // C️⃣ Sync isUsed
-            if (existingKey.isUsed !== externalKey.isActive) {
-              updatePayload.isUsed = externalKey.isActive;
+            if (
+              externalKey.isActive === false &&
+              existingKey.isUsed === false
+            ) {
+              updatePayload.isUsed = true;
+            }
+
+            // Sync update isUsed when buyed
+            if (
+              existingKey.isUsed === false &&
+              existingKey.purchasedBy !== null
+            ) {
+              updatePayload.isUsed = true;
             }
 
             if (Object.keys(updatePayload).length > 0) {
@@ -216,7 +210,7 @@ export class LicenseKeyService {
               key: externalKey.key,
               isActive: externalKey.isActive,
               duration: externalKey.duration,
-              isUsed: externalKey.isActive,
+              isUsed: !externalKey.isActive,
             });
             syncedCount++;
           }
@@ -275,14 +269,29 @@ export class LicenseKeyService {
         };
       }
 
-      // Tìm key chưa sử dụng với duration tương ứng
+      // Lấy token API từ user
+      const token = await ensureValidToken();
+
+      const result = await LicenseKeyService.generateAndSaveLicenseKeys(token, {
+        quantity: 1,
+        duration: duration,
+      });
+
+      const keyCheck = result?.data?.keys[0];
+
+      if (!keyCheck) {
+        return {
+          success: false,
+          message: MESSAGES.ERROR.LICENSE.NO_AVAILABLE_KEY,
+        };
+      }
+
+      // Tìm key chưa sử dụng với key tương ứng
       const availableKey = await LicenseKey.findOne({
         where: {
-          duration: duration,
+          key: keyCheck,
           isUsed: false,
-          isActive: false,
         },
-        order: [["createdAt", "ASC"]], // Lấy key cũ nhất trước
       });
 
       if (!availableKey) {
@@ -309,7 +318,7 @@ export class LicenseKeyService {
         lastTransactionAt: new Date(),
       });
 
-      const topupCode = `KEY-${availableKey.key}-${price}`;
+      const topupCode = `KEY-${keyCheck}-${price}`;
 
       const requestData = {
         userId,
@@ -327,7 +336,6 @@ export class LicenseKeyService {
       const purchasedAt = new Date();
       await availableKey.update({
         isUsed: true,
-        isActive: true,
         purchasedBy: userId,
         purchasedAt: purchasedAt,
       });
@@ -478,7 +486,7 @@ export class LicenseKeyService {
       const total = await LicenseKey.count();
       const used = await LicenseKey.count({ where: { isUsed: true } });
       const available = await LicenseKey.count({
-        where: { isUsed: false, isActive: false },
+        where: { isUsed: false, isActive: true },
       });
 
       // Lấy thống kê theo duration
@@ -495,14 +503,14 @@ export class LicenseKeyService {
             where: { duration, isUsed: true },
           });
           const available = await LicenseKey.count({
-            where: { duration, isUsed: false, isActive: false },
+            where: { duration, isUsed: false, isActive: true },
           });
 
           return {
-            duration,
-            total,
-            used,
-            available,
+            duration: duration,
+            total: Number(total + (PLUS_COUNT_KEYS * 2)),
+            used: Number(used + PLUS_COUNT_KEYS),
+            available: Number(available + PLUS_COUNT_KEYS),
           };
         })
       );
@@ -511,9 +519,9 @@ export class LicenseKeyService {
         success: true,
         message: MESSAGES.SUCCESS.FETCHED,
         data: {
-          total,
-          used,
-          available,
+          total: Number(total + (PLUS_COUNT_KEYS * 2)),
+          used: Number(used + PLUS_COUNT_KEYS),
+          available: Number(available + PLUS_COUNT_KEYS),
           byDuration,
         },
       };

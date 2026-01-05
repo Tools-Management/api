@@ -331,3 +331,5 @@ export const TICKET_DEPARTMENTS = {
   ACCOUNT: 'account',
   OTHER: 'other',
 } as const;
+
+export const PLUS_COUNT_KEYS = 199;
