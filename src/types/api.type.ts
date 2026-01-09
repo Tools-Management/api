@@ -49,6 +49,30 @@ export interface ILicenseResponse {
 }
 
 // ===========================
+// License Object
+// ===========================
+export interface ILicenseApiResponse {
+  _id: string;
+  email: string;
+  machineId: string;
+  licenseKey: string;
+  isActive: boolean;
+  expiresAt: Date;
+  activatedAt: Date | null;
+  lastValidatedAt: Date | null;
+}
+
+export interface ILicenseApiUpdateRequest {
+  email: string;
+  machineId: string;
+  licenseKey: string;
+  isActive: boolean;
+  expiresAt: Date;
+  activatedAt?: Date | null;
+  lastValidatedAt?: Date | null;
+}
+
+// ===========================
 // Upgrade License Request
 // ===========================
 export interface IUpgradeLicenseRequest {
@@ -153,3 +177,8 @@ export type IApiValidateLicenseErrorResponse = IApiResponse<null>
 export type IApiActivateLicenseSuccessResponse
   = IApiResponse<ILicenseResponse>
 export type IApiActivateLicenseErrorResponse = IApiResponse<null>
+
+// LICENSES
+export type IApiLicensesSuccessResponse
+  = IApiResponse<ILicenseApiResponse[]>
+export type IApiLicensesErrorResponse = IApiResponse<null>

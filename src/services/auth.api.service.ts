@@ -23,6 +23,9 @@ import {
   IApiGetMeSuccessResponse,
   IApiGetMeErrorResponse,
   ILicensePayload,
+  IApiLicensesSuccessResponse,
+  IApiLicensesErrorResponse,
+  ILicenseApiUpdateRequest,
 } from "@/types/api.type";
 import axios from "axios";
 
@@ -128,15 +131,15 @@ export class AuthApiService {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
 
       return response.data as string[];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error('Generate license keys error:', error);
+      console.error("Generate license keys error:", error);
       throw error;
     }
   }
@@ -172,6 +175,47 @@ export class AuthApiService {
   }
 
   //LICENSE
+  // Get all licenses
+  static async getAllLicenses(
+    token: string
+  ): Promise<IApiLicensesSuccessResponse | IApiLicensesErrorResponse> {
+    const response = await axios.get(`${ENV.EXTERNAL_API_URL}/licenses`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data as
+      | IApiLicensesSuccessResponse
+      | IApiLicensesErrorResponse;
+  }
+
+  // Update License
+  static async updateLicense(
+    id: string,
+    token: string,
+    data: ILicenseApiUpdateRequest
+  ): Promise<
+    IApiUpgradeLicenseErrorResponse | IApiUpgradeLicenseSuccessResponse
+  > {
+    const response = await axios.put(
+      `${ENV.EXTERNAL_API_URL}/licenses/${id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log('response api 3', response);
+    
+
+    return response.data as
+      | IApiUpgradeLicenseErrorResponse
+      | IApiUpgradeLicenseSuccessResponse;
+  }
+
   // License Upgrade
   static async upgradeLicense(
     token: string,

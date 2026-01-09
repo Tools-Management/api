@@ -7,6 +7,7 @@ import linkRoutes from "./link.routes";
 import ticketRoutes from "./ticket.routes";
 import apiRoutes from "./api.routes";
 import licenseKeyRoutes from "./license-key.routes";
+import licenseRoutes from "./license.routes";
 import walletRoutes from "./wallet.routes";
 import web2mRoutes from "./web2m.routes";
 
@@ -28,6 +29,7 @@ router.use(ROUTES.LINKS, linkRoutes);
 router.use(ROUTES.TICKETS, ticketRoutes);
 router.use(ROUTES.API, apiRoutes);
 router.use(ROUTES.LICENSE_KEYS, licenseKeyRoutes);
+router.use(ROUTES.LICENSES, licenseRoutes);
 router.use(ROUTES.WALLET, walletRoutes);
 router.use(ROUTES.WEB2M, web2mRoutes);
 

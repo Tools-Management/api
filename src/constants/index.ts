@@ -178,6 +178,7 @@ export const MESSAGES = {
       REQUIRED_SLUG: 'Slug is required',
     },
     LICENSE: {
+      REQUIRED_ID: 'ID is required',
       REQUIRED_LICENSE_KEY: 'License key is required',
       REQUIRED_KEY: 'Key is required',
       REQUIRED_IS_ACTIVE: 'Is active is required',
