@@ -160,7 +160,7 @@ export const generateLicenseKeys = asyncHandler(
 
     try {
       const token = await ensureValidToken();
-      
+
       // Gọi service để generate và lưu keys vào database
       const result = await LicenseKeyService.generateAndSaveLicenseKeys(token, {
         quantity,
@@ -168,17 +168,20 @@ export const generateLicenseKeys = asyncHandler(
       });
 
       if (!result.success) {
-        return sendErrorResponse(res, result.message, HTTP_STATUS.INTERNAL_SERVER_ERROR, result.error);
+        return sendErrorResponse(
+          res,
+          result.message,
+          HTTP_STATUS.INTERNAL_SERVER_ERROR,
+          result.error
+        );
       }
 
       return sendSuccessResponse(res, result.data, result.message);
-    }
-    catch {
+    } catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
 );
-
 
 export const updateLicenseKey = asyncHandler(
   async (req: Request, res: Response) => {
@@ -197,7 +200,7 @@ export const updateLicenseKey = asyncHandler(
     }
     try {
       const token = await ensureValidToken();
-      const result = await AuthApiService.updateLicenseKey(token, id,{
+      const result = await AuthApiService.updateLicenseKey(token, id, {
         key,
         isActive,
         duration,
@@ -208,8 +211,7 @@ export const updateLicenseKey = asyncHandler(
       }
 
       return sendSuccessResponse(res, result, MESSAGES.SUCCESS.UPDATED);
-    }
-    catch {
+    } catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -224,8 +226,7 @@ export const deleteLicenseKey = asyncHandler(
     try {
       const token = await ensureValidToken();
       await AuthApiService.deleteLicenseKey(token, id);
-    }
-    catch {
+    } catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -241,26 +242,29 @@ export const upgradeLicense = asyncHandler(
       return sendErrorResponse(res, MESSAGES.ERROR.LICENSE.REQUIRED_MACHINE_ID);
     }
     if (!newLicenseKey) {
-      return sendErrorResponse(res, MESSAGES.ERROR.LICENSE.REQUIRED_NEW_LICENSE_KEY);
-  }
-  try {
-    const token = await ensureValidToken();
-    const result = await AuthApiService.upgradeLicense(token, {
-      email,
-      machineId,
-      newLicenseKey,
-    });
-
-    if (!result.success) {
-      throw new Error("API_RETURNED_ERROR_EVEN_WITH_FRESH_TOKEN");
+      return sendErrorResponse(
+        res,
+        MESSAGES.ERROR.LICENSE.REQUIRED_NEW_LICENSE_KEY
+      );
     }
+    try {
+      const token = await ensureValidToken();
+      const result = await AuthApiService.upgradeLicense(token, {
+        email,
+        machineId,
+        newLicenseKey,
+      });
 
-    return sendSuccessResponse(res, result, MESSAGES.SUCCESS.UPGRADED);
+      if (!result.success) {
+        throw new Error("API_RETURNED_ERROR_EVEN_WITH_FRESH_TOKEN");
+      }
+
+      return sendSuccessResponse(res, result, MESSAGES.SUCCESS.UPGRADED);
+    } catch {
+      return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
+    }
   }
-  catch {
-    return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
-  }
-});
+);
 
 export const validateLicense = asyncHandler(
   async (req: Request, res: Response) => {
@@ -284,8 +288,7 @@ export const validateLicense = asyncHandler(
       }
 
       return sendSuccessResponse(res, result, MESSAGES.SUCCESS.VALIDATED);
-    }
-    catch {
+    } catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
@@ -301,7 +304,10 @@ export const activateLicense = asyncHandler(
       return sendErrorResponse(res, MESSAGES.ERROR.LICENSE.REQUIRED_MACHINE_ID);
     }
     if (!licenseKey) {
-      return sendErrorResponse(res, MESSAGES.ERROR.LICENSE.REQUIRED_LICENSE_KEY);
+      return sendErrorResponse(
+        res,
+        MESSAGES.ERROR.LICENSE.REQUIRED_LICENSE_KEY
+      );
     }
     try {
       const token = await ensureValidToken();
@@ -316,10 +322,70 @@ export const activateLicense = asyncHandler(
       }
 
       return sendSuccessResponse(res, result, MESSAGES.SUCCESS.ACTIVATED);
-    }
-    catch {
+    } catch {
       return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
     }
   }
+);
 
+// LICENSES
+export const getAllLicenses = asyncHandler(
+  async (_req: Request, res: Response) => {
+    try {
+      const token = await ensureValidToken();
+      const result = await AuthApiService.getAllLicenses(token);
+
+      if (!result.success) {
+        throw new Error("API_RETURNED_ERROR_EVEN_WITH_FRESH_TOKEN");
+      }
+
+      return sendSuccessResponse(res, result.data, MESSAGES.SUCCESS.FETCHED);
+    } catch {
+      return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
+    }
+  }
+);
+
+export const updateLicense = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { email, machineId, licenseKey, isActive, expiresAt } = req.body;
+
+    if (!id) {
+      return sendErrorResponse(res, MESSAGES.ERROR.LICENSE.REQUIRED_ID);
+    }
+
+    if (!email) {
+      return sendErrorResponse(res, MESSAGES.ERROR.LICENSE.REQUIRED_EMAIL);
+    }
+
+    if (!machineId) {
+      return sendErrorResponse(res, MESSAGES.ERROR.LICENSE.REQUIRED_MACHINE_ID);
+    }
+
+    if (!licenseKey) {
+      return sendErrorResponse(
+        res,
+        MESSAGES.ERROR.LICENSE.REQUIRED_LICENSE_KEY
+      );
+    }
+    try {
+      const token = await ensureValidToken();
+      const result = await AuthApiService.updateLicense(id, token, {
+        email,
+        machineId,
+        licenseKey,
+        isActive,
+        expiresAt,
+      });
+
+      if (!result.success) {
+        throw new Error("API_RETURNED_ERROR_EVEN_WITH_FRESH_TOKEN");
+      }
+
+      return sendSuccessResponse(res, result, MESSAGES.SUCCESS.UPGRADED);
+    } catch {
+      return sendErrorResponse(res, MESSAGES.ERROR.AUTH.UNAUTHORIZED);
+    }
+  }
 );
