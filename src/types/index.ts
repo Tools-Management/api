@@ -401,6 +401,31 @@ export interface ILicenseKeyQuery {
   key?: string;
 }
 
+// License Types
+export interface ILicense {
+  id?: number;
+  externalId: string; // _id từ external API
+  email: string;
+  machineId: string;
+  licenseKey: string;
+  isActive: boolean;
+  expiresAt: Date;
+  activatedAt: Date | null;
+  lastValidatedAt: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ILicenseQuery {
+  page?: number;
+  limit?: number;
+  email?: string;
+  machineId?: string;
+  externalId?: string;
+  licenseKey?: string;
+  isActive?: boolean;
+}
+
 // Export Wallet, Topup, and Order types
 export * from './wallet';
 

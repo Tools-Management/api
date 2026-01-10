@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { API_ROUTES } from "@/constants";
-import { authenticateToken, requireSuperAdmin } from "@/middlewares/auth";
+import {
+  authenticateToken,
+  requireAdmin,
+  requireSuperAdmin,
+} from "@/middlewares/auth";
 import { generalRateLimiter } from "@/middlewares/rateLimiter";
 import {
   securityHeaders,
@@ -14,8 +18,10 @@ import {
   createLicenseKey,
   deleteLicenseKey,
   generateLicenseKeys,
+  getAllLicenses,
   getLicenseKeyById,
   getLicenseKeys,
+  updateLicense,
   updateLicenseKey,
   upgradeLicense,
   validateLicense,
@@ -31,7 +37,7 @@ router.use(sanitizeRequest);
 router.use(requestLogger);
 
 //LICENSE KEYS
-router.get(API_ROUTES.LICENSE_KEYS.GET_ALL, getLicenseKeys);
+router.get(API_ROUTES.LICENSE_KEYS.GET_ALL, requireAdmin, getLicenseKeys);
 
 router.get(
   API_ROUTES.LICENSE_KEYS.GET_BY_ID,
@@ -72,6 +78,10 @@ router.delete(
 );
 
 //LICENSES
+router.get(API_ROUTES.LICENSES.BASE, requireAdmin, getAllLicenses);
+
+router.put(API_ROUTES.LICENSES.UPDATE, requireAdmin, updateLicense);
+
 router.post(
   API_ROUTES.LICENSES.UPGRADE,
   generalRateLimiter,

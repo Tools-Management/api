@@ -8,6 +8,7 @@ export const ROUTES = {
   TICKETS: '/tickets',
   API: '/api-management',
   LICENSE_KEYS: '/license-keys',
+  LICENSES: '/licenses',
   WALLET: '/wallet',
   WEB2M: '/payments',
   // Health Check
@@ -71,6 +72,14 @@ export const LICENSE_KEY_ROUTES = {
   PURCHASE: '/purchase',
 } as const;
 
+export const LICENSE_ROUTES = {
+  BASE: '/',
+  GET_ALL: '/',
+  SYNC: '/sync',
+  UPDATE: '/:id',
+} as const;
+
+
 export const API_ROUTES = {
   LICENSE_KEYS: {
     BASE: '/license-keys',
@@ -86,6 +95,7 @@ export const API_ROUTES = {
     ACTIVATE: '/licenses/activate',
     VALIDATE: '/licenses/validate',
     UPGRADE: '/licenses/upgrade',
+    UPDATE: 'licenses/:id'
   },
 } as const;
 
